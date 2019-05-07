@@ -1,6 +1,6 @@
 angular
-	.module('DeepLearning', [])
-	.controller('NeuralNetworksController', ['$scope', function($scope) {
+	.module('DeepLearning', ['ngWebworker'])
+	.controller('NeuralNetworksController', ['$scope', 'Webworker', function($scope, Webworker) {
 	
 		// static class methods for matrix operations
 		class Matrix {
@@ -1023,21 +1023,76 @@ angular
 		$scope.hiddenLayerNodes = 4;
 		$scope.LearningRate = 2.0;
 		$scope.Epochs = 10000;
+		$scope.Tolerance = 0.0001;
+		$scope.Threshold = 0.9;
 		
 		$scope.TrainingUploadProgress = 0;
 		
-		$scope.TrainNetwork = function(input, output, alpha, epochs, categories, hiddenLayers, tolerance, useL2) {
+		$scope.Training = false;
+		
+		$scope.AsyncTrainer = function() {
 			
-			$scope.Network = new DeepNeuralNetwork();
+			/*
+			// function that will become a worker
+			function async(input, output, alpha, epochs, categories, hiddenLayers, tolerance) {
+				
+				var network = new DeepNeuralNetwork();
 			
-			// alpha, epochs, categories, inputs, items, tolerance, hiddenLayers, useL2 = false)
-			$scope.NetworkOptions = new NeuralNetworkOptions(alpha, epochs, categories, input[0].length, input.length, tolerance, hiddenLayers.length, useL2 = false);
+				// alpha, epochs, categories, inputs, items, tolerance, hiddenLayers, useL2 = false
+				var opts = new NeuralNetworkOptions(alpha, epochs, categories, input[0].length, input.length, tolerance, hiddenLayers.length);
+				
+				network.SetupHiddenLayers(opts.Inputs, opts.Categories, hiddenLayers);
+				network.Network.Setup(output, opts);
+
+				// api to send a promise notification
+				// api to send a promise notification
+				while (!network.Step(input, opts)) {
+					
+					notify(network.Iterations);
+				}
+				
+				// api to resolve the promise. Note: according to the $q spec, 
+				// a promise cannot be used once it has been resolved or rejected.
+				complete();
+			}
+			*/
 			
-			$scope.Network.SetupHiddenLayers($scope.NetworkOptions.Inputs, $scope.NetworkOptions.Categories, hiddenLayers);
-			$scope.Network.Setup(output, $scope.NetworkOptions);
+			if (!$scope.Training && $scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
+				
+				$scope.Network = new DeepNeuralNetwork();
 			
-			// train network
-			$scope.Network.Train(input, output, $scope.NetworkOptions);
+				$scope.NetworkOptions = new NeuralNetworkOptions($scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Inputs, $scope.Items, $scope.Tolerance, $scope.HiddenLayerNodes.length, false);
+				$scope.Network.SetupHiddenLayers($scope.NetworkOptions.Inputs, $scope.NetworkOptions.Categories, $scope.HiddenLayerNodes);
+				$scope.Network.Setup($scope.Output, $scope.NetworkOptions);
+			
+				$scope.Training = true;
+				
+				while (!$scope.Network.Step($scope.TrainingData, $scope.NetworkOptions)) {
+					
+				}
+				
+				$scope.Training = false;
+				
+				var classification =  $scope.Network.Classify($scope.TrainingData, $scope.NetworkOptions, $scope.Threshold);
+				
+				console.log('trained network');
+				console.log($scope.Network);
+				console.log('classification');
+				console.log(classification);
+				
+				/*
+				var asyncTrainer = Webworker.create(async, {async: true });
+
+				asyncTrainer.run($scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.HiddenLayerNodes, $scope.Tolerance).then(function(result) {
+					
+					$scope.TrainingProgress = 1.0;
+					
+				}, null, function(progress) {
+					
+					$scope.TrainingProgress = progress / $scope.Epochs;
+				});
+				*/
+			}
 		};
 		
 		$scope.SelectedFile = {};
@@ -1129,6 +1184,38 @@ angular
 		
 		$scope.Initialize = function() {
 			
+		}
+		
+		$scope.AsyncProgress = 0;
+		
+		$scope.TestAsync = function() {
+			
+			// function that will become a worker
+			function async() {
+				// api to send a promise notification
+				for (var i = 0; i < 100000; i++) {
+					notify(i);
+				}
+				
+				// api to resolve the promise. Note: according to the $q spec, 
+				// a promise cannot be used once it has been resolved or rejected.
+				complete();
+			}
+
+			// mark this worker as one that supports async notifications
+			var myWorker = Webworker.create(async, {async: true });
+
+			// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
+			myWorker.run().then(function(result) {
+				// promise is resolved.
+				console.log('done');
+				
+				$scope.AsyncProgress = 1.0;
+				
+			}, null, function(progress) {
+				// promise has a notification
+				$scope.AsyncProgress = progress / 100000;
+			});
 		}
 		
 	}]).directive("filelistBind", function() {
