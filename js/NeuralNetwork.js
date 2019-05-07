@@ -242,7 +242,8 @@ angular
 				// api to send a promise notification
 				while (!network.Step(normalizedData, opts)) {
 					
-					notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
+					if (network.Iterations % 1000 == 0)
+						notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
 				}
 				
 				// api to resolve the promise. Note: according to the $q spec, 
