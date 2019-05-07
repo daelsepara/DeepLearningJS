@@ -32,7 +32,7 @@ angular
 		
 		$scope.DelimiterNames = ["Tab \\t", "Comma ,", "Space \\s", "Vertical Pipe |", "Colon :", "Semi-Colon ;", "Forward Slash /", '/', "Backward Slash \\"];
 		$scope.Delimiters = ['\t', ',', ' ', '|', ':', ';', '/', '\\'];
-		$scope.delimiter = "";
+		$scope.delimiter = $scope.DelimiterNames[0];
 		$scope.SelectedDelimiter = 0;
 		
 		$scope.SelectDelimeter = function() {
@@ -229,7 +229,7 @@ angular
 			// function that will become a worker
 			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes) {
 
-				importScripts(currentPath + "js/Models.js");
+				importScripts(currentPath + "js/Models.min.js");
 				
 				var network = new DeepNeuralNetwork();
 				var normalizedData = network.Normalize(input);
@@ -305,10 +305,11 @@ angular
 				var normalizedData = network.ApplyNormalization(test);
 				
 				var classification = network.Classify(normalizedData, opts, threshold);
+				var prediction = network.Predict(normalizedData, opts);
 				
 				// api to resolve the promise. Note: according to the $q spec, 
 				// a promise cannot be used once it has been resolved or rejected.
-				complete({classification: classification});
+				complete({classification: classification, prediction: prediction});
 			}
 			
 			if (!$scope.Training && $scope.Samples > 0 && $scope.Inputs > 0 && $scope.TestData.length > 0 && $scope.Network != undefined && $scope.NetworkOptions != undefined) {
@@ -322,19 +323,26 @@ angular
 				$scope.asyncClassifier.run(currentPath, $scope.TestData, $scope.Network, $scope.NetworkOptions, $scope.Threshold).then(function(result) {
 					
 					// promise is resolved.
-					
 					$scope.classificationResult = '';
 					
 					if (result.classification != undefined) {
 						
-						for(var i = 0; i < result.classification.length; i++) {
+						$scope.Classification = result.classification;
+						
+						for(var i = 0; i < $scope.Classification.length; i++) {
 							
 							if (i > 0) {
+								
 								$scope.classificationResult += '\n';
 							}
 							
-							$scope.classificationResult += result.classification[i][0].toString();
+							$scope.classificationResult += $scope.Classification[i][0].toString();
 						}
+					}
+					
+					if (result.prediction != undefined) {
+						
+						$scope.Prediction = result.prediction;
 					}
 					
 					$scope.ClassifierProgress = 1.0;
