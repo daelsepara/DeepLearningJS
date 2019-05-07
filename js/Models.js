@@ -644,7 +644,7 @@ class Matrix {
 			}
 		}
 		
-		return result;
+		return { result: result, min: minval, max: maxval };
 	}
 };
 
@@ -696,6 +696,10 @@ class DeepNeuralNetwork {
 		this.L2 = 0.0;
 
 		this.Iterations = 0;
+
+		// Normalization data
+		this.Max = 0.0;
+		this.Min = 0.0;
 	}
 	
 	Forward(input) {
@@ -1030,5 +1034,15 @@ class DeepNeuralNetwork {
 		this.Setup(output, opts);
 
 		while (!this.Step(input, opts)) { }
+	}
+	
+	Normalize(input) {
+		
+		var normalize = Matrix.Normalize(input);
+		
+		this.Min = normalize.min;
+		this.Max = normalize.max;
+		
+		return normalize.result;
 	}
 };

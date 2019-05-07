@@ -121,38 +121,6 @@ angular
 			
 		}
 		
-		$scope.AsyncProgress = 0;
-		
-		$scope.TestAsync = function() {
-			
-			// function that will become a worker
-			function async() {
-				// api to send a promise notification
-				for (var i = 0; i < 100000; i++) {
-					notify(i);
-				}
-				
-				// api to resolve the promise. Note: according to the $q spec, 
-				// a promise cannot be used once it has been resolved or rejected.
-				complete();
-			}
-
-			// mark this worker as one that supports async notifications
-			var myWorker = Webworker.create(async, {async: true });
-
-			// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
-			myWorker.run().then(function(result) {
-				// promise is resolved.
-				console.log('done');
-				
-				$scope.AsyncProgress = 1.0;
-				
-			}, null, function(progress) {
-				// promise has a notification
-				$scope.AsyncProgress = progress / 100000;
-			});
-		}
-		
 		$scope.asyncTrainer = undefined;
 		
 		$scope.StopAsyncTrainer = function() {
@@ -181,6 +149,75 @@ angular
 		}
 
 		$scope.AsyncTrainer = function() {
+			
+			// function that will become a worker
+			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, threshold) {
+
+				importScripts(currentPath + "js/Models.js");
+				
+				
+				var network = new DeepNeuralNetwork();
+				var normalizedData = network.Normalize(input);
+
+				var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, false);
+				
+				network.SetupHiddenLayers(normalizedData[0].length, opts.Categories, hiddenLayerNodes);
+				network.Setup(output, opts);
+				
+				// api to send a promise notification
+				while (!network.Step(normalizedData, opts)) {
+					
+					notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
+				}
+				
+				// api to resolve the promise. Note: according to the $q spec, 
+				// a promise cannot be used once it has been resolved or rejected.
+				complete({network: network, opts: opts});
+			}
+			
+			if (!$scope.Training && $scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
+				
+				var currentPath = document.URL;
+				
+				$scope.Training = true;
+				
+				// mark this worker as one that supports async notifications
+				$scope.asyncTrainer = Webworker.create(async, {async: true });
+
+				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
+				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.Threshold).then(function(result) {
+					
+					// promise is resolved.
+
+					$scope.Network = result.network;
+					$scope.NetworkOptions = result.opts;
+					
+					console.log("Network");
+					console.log($scope.Network);
+					console.log("Network Options");
+					console.log($scope.NetworkOptions);
+					
+					$scope.TrainingProgress = 1.0;
+					
+					$scope.Training = false;
+					
+				}, null, function(network) {
+					
+					// promise has a notification
+					$scope.TrainingProgress = network.Iterations / $scope.Epochs;
+					$scope.Network.L2 = network.L2;
+					$scope.Network.Iterations = network.Iterations;
+					$scope.Network.Cost = network.Cost;
+					
+				}).catch(function(oError) {
+					
+					$scope.asyncTrainer = null;
+					
+				});
+			}
+		}
+		
+		$scope.AsyncClassifier = function() {
 			
 			// function that will become a worker
 			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, threshold) {
@@ -218,13 +255,13 @@ angular
 				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
 				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.Threshold).then(function(result) {
 					
+					// promise is resolved.
+
 					$scope.Network = result.network;
 					$scope.NetworkOptions = result.opts;
 					
-					// promise is resolved.
 					console.log("Network");
 					console.log($scope.Network);
-					
 					console.log("Network Options");
 					console.log($scope.NetworkOptions);
 					
