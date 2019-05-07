@@ -1165,7 +1165,7 @@ angular
 				// api to send a promise notification
 				while (!network.Step(input, opts)) {
 					
-					notify(network.Iterations);
+					notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
 				}
 				
 				// api to resolve the promise. Note: according to the $q spec, 
@@ -1193,10 +1193,13 @@ angular
 					
 					$scope.TrainingProgress = 1.0;
 					
-				}, null, function(progress) {
+				}, null, function(network) {
 					
 					// promise has a notification
-					$scope.TrainingProgress = progress / $scope.Epochs;
+					$scope.TrainingProgress = network.Iterations / $scope.Epochs;
+					$scope.Network.L2 = network.L2;
+					$scope.Network.Iterations = network.Iterations;
+					$scope.Network.Cost = network.Cost;
 				});
 			}
 		}
