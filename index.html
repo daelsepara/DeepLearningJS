@@ -8,7 +8,7 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
 	<script src="js/ng-webworker.min.js"></script>
-	<script src="js/NeuralNetwork.js"></script>
+	<script src="js/NeuralNetwork.min.js"></script>
 </head>
 
 <body>
@@ -37,7 +37,7 @@
 								<select class="form-control" ng-model="delimiter" data-ng-options="x for x in DelimiterNames" ng-change="SelectDelimeter()" ng-disabled = "Training"></select><br/>
 								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTrainingData()" ng-disabled = "Training"/><br/><br/>
 								<progress class="progress progress-bar" role="progressbar" ng-show = "TrainingUploadProgress > 0" value="{{TrainingUploadProgress}}"></progress><br/><br/>
-								<textarea ng-model = "fileContent" rows="4" cols="60" style = "resize: none;"></textarea>
+								<textarea ng-model = "fileContent" rows="4" cols="60" style = "resize: none;" readonly ></textarea>
 								<br/><br/>
 								<div class="{{Items == 0 && Inputs == 0 && Categories == 0 ? 'alert alert-danger' : 'alert alert-success' }}" role="alert">
 									<span><b>Items</b>: {{Items}} <b>Input features</b>: {{Inputs}} <b>Categories</b>: {{Categories}}</span>
@@ -97,7 +97,7 @@
 								<div class = "row">
 									<div class = "col-sm">
 										<b>Test data</b><br/>
-										<textarea ng-model = "testContent" rows="4" cols="60" style = "resize: none;"></textarea>
+										<textarea ng-model = "testContent" rows="4" cols="60" style = "resize: none;" readonly></textarea>
 										<br/><br/>
 										<div class="{{Samples == 0 || Inputs == 0 ? 'alert alert-danger' : 'alert alert-success' }}" role="alert">
 											<span><b>Samples</b>: {{Samples}} <b>Input features</b>: {{Inputs}}</span>
