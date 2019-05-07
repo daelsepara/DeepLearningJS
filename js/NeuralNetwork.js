@@ -153,6 +153,33 @@ angular
 			});
 		}
 		
+		$scope.asyncTrainer = undefined;
+		
+		$scope.StopAsyncTrainer = function() {
+
+			if ($scope.asyncTrainer) {
+				
+				try {
+					
+					$scope.asyncTrainer.terminate();
+		
+					$scope.asyncTrainer  = null;
+					
+					$scope.Training = false;
+					
+					$scope.TrainingProgress = 0.0;
+					
+				} catch (err) {
+					
+					$scope.asyncTrainer = null;
+					
+					$scope.Training = false;
+					
+					$scope.TrainingProgress = 0.0;
+				}
+			}
+		}
+
 		$scope.AsyncTrainer = function() {
 			
 			// function that will become a worker
@@ -1181,13 +1208,15 @@ angular
 				complete({network: network, opts: opts});
 			}
 			
-			if ($scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
+			if (!$scope.Training && $scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
+				
+				$scope.Training = true;
 				
 				// mark this worker as one that supports async notifications
-				var asyncTrainer = Webworker.create(async, {async: true });
+				$scope.asyncTrainer = Webworker.create(async, {async: true });
 
 				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
-				asyncTrainer.run($scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.Threshold).then(function(result) {
+				$scope.asyncTrainer.run($scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.Threshold).then(function(result) {
 					
 					$scope.Network = result.network;
 					$scope.NetworkOptions = result.opts;
@@ -1201,6 +1230,8 @@ angular
 					
 					$scope.TrainingProgress = 1.0;
 					
+					$scope.Training = false;
+					
 				}, null, function(network) {
 					
 					// promise has a notification
@@ -1208,6 +1239,11 @@ angular
 					$scope.Network.L2 = network.L2;
 					$scope.Network.Iterations = network.Iterations;
 					$scope.Network.Cost = network.Cost;
+					
+				}).catch(function(oError) {
+					
+					$scope.asyncTrainer = null;
+					
 				});
 			}
 		}
