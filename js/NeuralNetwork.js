@@ -804,6 +804,35 @@ angular
 							}
 						}
 					}
+					
+					static Normalize(A) {
+							
+						var Ax = A[0].length, Ay = A.length;
+						
+						var result = this.Create(Ay, Ax);
+						
+						var maxval = Number.MIN_VALUE;
+						var minval = Number.MAX_VALUE;
+						
+						for (var y = 0; y < Ay; y++) {
+							for (var x = 0; x < Ax; x++) {
+								
+								maxval = Math.max(A[y][x], maxval);
+								minval = Math.min(A[y][x], minval);
+							}
+						}
+						
+						var denum = maxval - minval;
+						
+						for (var y = 0; y < Ay; y++) {
+							for (var x = 0; x < Ax; x++) {
+								
+								result[y][x] = (A[y][x] - minval)/denum;
+							}
+						}
+						
+						return result;
+					}
 				};
 				
 				class NeuralNetworkOptions {
@@ -1191,14 +1220,16 @@ angular
 					}
 				};
 
-				var network = new DeepNeuralNetwork();
-				var opts = new NeuralNetworkOptions(alpha, epochs, categories, input[0].length, input.length, tolerance, hiddenLayerNodes.length, false);
+				var normalizedData = Matrix.Normalize(input);
 				
-				network.SetupHiddenLayers(input[0].length, opts.Categories, hiddenLayerNodes);
+				var network = new DeepNeuralNetwork();
+				var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, false);
+				
+				network.SetupHiddenLayers(normalizedData[0].length, opts.Categories, hiddenLayerNodes);
 				network.Setup(output, opts);
 				
 				// api to send a promise notification
-				while (!network.Step(input, opts)) {
+				while (!network.Step(normalizedData, opts)) {
 					
 					notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
 				}
