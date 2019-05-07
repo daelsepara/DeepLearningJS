@@ -1020,8 +1020,11 @@ angular
 		$scope.Categories = 0;
 		$scope.Items = 0;
 		$scope.TestData = [];
+		$scope.hiddenLayerNodes = 4;
+		$scope.LearningRate = 2.0;
+		$scope.Epochs = 10000;
 		
-		$scope.progress = 0;
+		$scope.TrainingUploadProgress = 0;
 		
 		$scope.TrainNetwork = function(input, output, alpha, epochs, categories, hiddenLayers, tolerance, useL2) {
 			
@@ -1051,8 +1054,6 @@ angular
 			$scope.SelectedDelimiter = i + 1;
 		}
 		
-		$scope.hiddenLayerNodes = 2;
-		
 		$scope.AddHiddenLayer = function() {
 			
 			$scope.HiddenLayerNodes.push(parseInt($scope.hiddenLayerNodes));
@@ -1072,7 +1073,7 @@ angular
 
 			reader.onload = function(progressEvent) {
 
-				$scope.progress = progressEvent.loaded / progressEvent.total;
+				$scope.TrainingUploadProgress = progressEvent.loaded / progressEvent.total;
 				
 				$scope.$apply(function() {
 					
@@ -1139,7 +1140,7 @@ angular
 				scope.$apply(function( scope ) {
 					
 					scope[ attrs.name ] = evt.target.files;
-					scope['progress'] = 0;
+					scope['TrainingUploadProgress'] = 0;
 					scope['Items'] = 0;
 					scope['Categories'] = 0;
 					scope['Inputs'] = 0;
