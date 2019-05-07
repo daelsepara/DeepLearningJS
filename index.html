@@ -54,20 +54,18 @@
 										</ul>
 										<br/>
 										<div>
-											<b>Nodes</b>&nbsp;<input type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" /><br/><br/>
+											<b>Nodes</b>&nbsp;<input class = "form-control" type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" /><br/><br/>
 											<input type="button" class = "btn btn-outline-success" value="add hidden layer" ng-click="AddHiddenLayer()" ng-disabled = "Training" />
 										</div>
 										<br/>
 									</div>
 									<div class="col-sm">
 										<b>Learning rate (&alpha;)</b><br/>
-										<input type="number" ng-model = "LearningRate" name="LearningRate" min="0.01" max="10" step = "0.01" value = "{{LearningRate}}" ng-disabled = "Training" /><br/><br/>
+										<input class = "form-control" type="number" ng-model = "LearningRate" name="LearningRate" min="0.01" max="10" step = "0.01" value = "{{LearningRate}}" ng-disabled = "Training" /><br/><br/>
 										<b>Epochs</b><br/>
-										<input type="number" ng-model = "Epochs" name="Epochs" min="100" max="1000000" step = "100" value = "{{Epochs}}" ng-disabled = "Training" /><br/><br/>
+										<input class = "form-control" type="number" ng-model = "Epochs" name="Epochs" min="100" max="1000000" step = "100" value = "{{Epochs}}" ng-disabled = "Training" /><br/><br/>
 										<b>Tolerance</b><br/>
-										<input type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" ng-disabled = "Training" /><br/><br/>
-										<b>Threshold</b><br/>
-										<input type="number" ng-model = "Threshold" name="Threshold" min="0.01" max="1" step = "0.01" value = "{{Threshold}}" ng-disabled = "Training" /><br/><br/>
+										<input class = "form-control" type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" ng-disabled = "Training" /><br/><br/>
 									</div>
 								</div>
 								<div class="row">
@@ -106,8 +104,9 @@
 									<div class = "col-sm">
 										<b>Classification</b><br/>
 										<textarea ng-model = "classificationResult" rows="4" cols="40" style = "resize: none;"></textarea><br/><br/>
-										<input type="button" class="btn btn-outline-primary" value="Classify" ng-click="AsyncClassifier()" ng-disabled = "Training" /><br ng-show = "!Training"/>
-										<br/><br/>
+										<b>Threshold</b><br/>
+										<input class = "form-control" type="number" ng-model = "Threshold" name="Threshold" min="0.01" max="1" step = "0.01" value = "{{Threshold}}" ng-disabled = "Training" /><br/>
+										<input type="button" class="btn btn-outline-primary" value="Classify" ng-click="AsyncClassifier()" ng-disabled = "Training" /><br/><br/>
 									</div>
 								</div>
 							</div>
