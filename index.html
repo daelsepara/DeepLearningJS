@@ -32,10 +32,10 @@
 						<div class="tab-pane fade show active" id="pills-data" role="tabpanel" aria-labelledby="pills-data-tab">
 							<div class="container border border-secondary rounded">
 								<b>select file</b><br/>
-								<input type="file" multiple name="files" filelist-bind class="btn btn-outline-secondary" /><br/><br/>
+								<input type="file" multiple name="files" filelist-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 								<b>delimiters</b><br/>
-								<select class="form-control" ng-model="delimiter" data-ng-options="x for x in DelimiterNames" ng-change="SelectDelimeter()"></select><br/>
-								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTrainingData()" /><br/><br/>
+								<select class="form-control" ng-model="delimiter" data-ng-options="x for x in DelimiterNames" ng-change="SelectDelimeter()" ng-disabled = "Training"></select><br/>
+								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTrainingData()" ng-disabled = "Training"/><br/><br/>
 								<progress class="progress progress-bar" role="progressbar" ng-show = "TrainingUploadProgress > 0" value="{{TrainingUploadProgress}}"></progress><br/><br/>
 								<textarea ng-model = "fileContent" rows="4" cols="60" style = "resize: none;"></textarea>
 								<br/><br/>
@@ -50,29 +50,29 @@
 									<div class="col-sm">
 										<b>Hidden layers</b><br ng-show = "HiddenLayerNodes.length > 0"/><br/>
 										<ul class="list-group">
-											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}&nbsp;<input type="button" class = "btn btn-outline-danger float-right" value=" X " ng-click="RemoveHiddenLayer($index)" /></li>
+											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}&nbsp;<input type="button" class = "btn btn-outline-danger float-right" value=" X " ng-click="RemoveHiddenLayer($index)" ng-disabled = "Training" /></li>
 										</ul>
 										<br/>
 										<div>
 											<b>Nodes</b>&nbsp;<input type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" /><br/><br/>
-											<input type="button" class = "btn btn-outline-success" value="add hidden layer" ng-click="AddHiddenLayer()" />
+											<input type="button" class = "btn btn-outline-success" value="add hidden layer" ng-click="AddHiddenLayer()" ng-disabled = "Training" />
 										</div>
 										<br/>
 									</div>
 									<div class="col-sm">
 										<b>Learning rate (&alpha;)</b><br/>
-										<input type="number" ng-model = "LearningRate" name="LearningRate" min="0.01" max="10" step = "0.01" value = "{{LearningRate}}" /><br/><br/>
+										<input type="number" ng-model = "LearningRate" name="LearningRate" min="0.01" max="10" step = "0.01" value = "{{LearningRate}}" ng-disabled = "Training" /><br/><br/>
 										<b>Epochs</b><br/>
-										<input type="number" ng-model = "Epochs" name="Epochs" min="100" max="1000000" step = "100" value = "{{Epochs}}" /><br/><br/>
+										<input type="number" ng-model = "Epochs" name="Epochs" min="100" max="1000000" step = "100" value = "{{Epochs}}" ng-disabled = "Training" /><br/><br/>
 										<b>Tolerance</b><br/>
-										<input type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" /><br/><br/>
+										<input type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" ng-disabled = "Training" /><br/><br/>
 										<b>Threshold</b><br/>
-										<input type="number" ng-model = "Threshold" name="Threshold" min="0.01" max="1" step = "0.01" value = "{{Threshold}}" /><br/><br/>
+										<input type="number" ng-model = "Threshold" name="Threshold" min="0.01" max="1" step = "0.01" value = "{{Threshold}}" ng-disabled = "Training" /><br/><br/>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col">
-										<input type="button" class="btn btn-outline-primary" value="Train Network" ng-click="AsyncTrainer()" /><br/><br/>
+										<input type="button" class="btn btn-outline-primary" value="Train Network" ng-click="AsyncTrainer()" ng-disabled = "Training" ng-show = "!Training"/><br ng-show = "!Training"/><br ng-show = "!Training"/>
 										<input ng-show = "Training" type="button" class="btn btn-outline-danger" value="Stop" ng-click="StopAsyncTrainer()" /><br/><br/>
 										<progress class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ng-show = "TrainingProgress > 0 && TrainingProgress < 1" value="{{TrainingProgress}}"></progress><br/><br/>
 									</div>
