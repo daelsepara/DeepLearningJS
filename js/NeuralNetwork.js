@@ -227,7 +227,7 @@ angular
 		$scope.AsyncTrainer = function() {
 			
 			// function that will become a worker
-			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, threshold) {
+			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes) {
 
 				importScripts(currentPath + "js/Models.js");
 				
@@ -261,7 +261,7 @@ angular
 				$scope.asyncTrainer = Webworker.create(async, { async: true });
 
 				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
-				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.Threshold).then(function(result) {
+				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes).then(function(result) {
 					
 					// promise is resolved.
 
