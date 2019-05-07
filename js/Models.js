@@ -646,6 +646,24 @@ class Matrix {
 		
 		return { result: result, min: minval, max: maxval };
 	}
+	
+	static ApplyNormalization(A, maxval, minval) {
+		
+		var Ax = A[0].length, Ay = A.length;
+		
+		var result = this.Create(Ay, Ax);
+		
+		var denum = maxval - minval;
+		
+		for (var y = 0; y < Ay; y++) {
+			for (var x = 0; x < Ax; x++) {
+				
+				result[y][x] = (A[y][x] - minval)/denum;
+			}
+		}
+		
+		return result;
+	}
 };
 
 class NeuralNetworkOptions {
@@ -1044,5 +1062,12 @@ class DeepNeuralNetwork {
 		this.Max = normalize.max;
 		
 		return normalize.result;
+	}
+	
+	ApplyNormalization(input) {
+		
+		var normalize = Matrix.ApplyNormalization(input, this.Max, this.Min);
+		
+		return normalize;
 	}
 };
