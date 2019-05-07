@@ -50,7 +50,7 @@
 									<div class="col-sm">
 										<b>Hidden layers</b><br ng-show = "HiddenLayerNodes.length > 0"/><br/>
 										<ul class="list-group">
-											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}</li>
+											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}&nbsp;<input type="button" class = "btn btn-outline-danger float-right" value=" X " ng-click="RemoveHiddenLayer($index)" /></li>
 										</ul>
 										<br/>
 										<div>

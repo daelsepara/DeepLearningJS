@@ -43,6 +43,14 @@ angular
 			$scope.HiddenLayerNodes.push(parseInt($scope.hiddenLayerNodes));
 		}
 		
+		$scope.RemoveHiddenLayer = function(layer) {
+			
+			if ($scope.HiddenLayerNodes.length > 0 && layer >= 0 & layer < $scope.HiddenLayerNodes.length) {
+				
+				$scope.HiddenLayerNodes.splice(layer, 1)
+			}
+		}
+		
 		$scope.ReadTrainingData = function() {
 			
 			$scope.TrainingData = [];
