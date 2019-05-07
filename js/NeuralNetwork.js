@@ -1189,7 +1189,7 @@ angular
 					console.log($scope.Network);
 					
 					console.log("Network Options");
-					console.log($scope.opts);
+					console.log($scope.NetworkOptions);
 					
 					$scope.TrainingProgress = 1.0;
 					
