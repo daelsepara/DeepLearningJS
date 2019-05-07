@@ -73,7 +73,16 @@
 								<div class="row">
 									<div class="col">
 										<input type="button" class="btn btn-outline-primary" value="Train Network" ng-click="AsyncTrainer()" /><br/><br/>
-										<progress class="progress progress-bar" role="progressbar" ng-show = "TrainingProgress > 0 && TrainingProgress < 1" value="{{TrainingProgress}}"></progress><br/><br/>
+										<progress class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ng-show = "TrainingProgress > 0 && TrainingProgress < 1" value="{{TrainingProgress}}"></progress><br/><br/>
+									</div>
+									<div class="col" ng-show = "TrainingProgress == 1.0">
+										<b>Training Results</b><br/><br/>
+										<b>Training Error</b><br/>
+										<span>{{Network.Cost}}</span><br/><br/>
+										<b>L2 Error</b><br/>
+										<span>{{Network.L2}}</span><br/><br/>
+										<b>Iterations</b><br/>
+										<span>{{Network.Iterations}}</span><br/><br/>
 									</div>
 									<!--
 									<div class="col">
