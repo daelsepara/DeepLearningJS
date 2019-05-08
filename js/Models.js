@@ -623,42 +623,47 @@ class Matrix {
 		var Ax = A[0].length, Ay = A.length;
 		
 		var result = this.Create(Ay, Ax);
+		var maxvals = this.Create(Ax);
+		var minvals = this.Create(Ax);
 		
-		var maxval = Number.MIN_VALUE;
-		var minval = Number.MAX_VALUE;
+		for (var x = 0; x < Ax; x++) {
+		
+			maxvals[x] = Number.MIN_VALUE;
+			minvals[x] = Number.MAX_VALUE;
+		}
 		
 		for (var y = 0; y < Ay; y++) {
 			for (var x = 0; x < Ax; x++) {
 				
-				maxval = Math.max(A[y][x], maxval);
-				minval = Math.min(A[y][x], minval);
+				maxvals[x] = Math.max(A[y][x], maxvals[x]);
+				minvals[x] = Math.min(A[y][x], minvals[x]);
 			}
 		}
-		
-		var denum = maxval - minval;
 		
 		for (var y = 0; y < Ay; y++) {
 			for (var x = 0; x < Ax; x++) {
 				
-				result[y][x] = (A[y][x] - minval)/denum;
+				var denum = maxvals[x] - minvals[x];
+				
+				result[y][x] = (A[y][x] - minvals[x])/denum;
 			}
 		}
 		
-		return { result: result, min: minval, max: maxval };
+		return { result: result, min: minvals, max: maxvals };
 	}
 	
-	static ApplyNormalization(A, maxval, minval) {
+	static ApplyNormalization(A, maxvals, minvals) {
 		
 		var Ax = A[0].length, Ay = A.length;
 		
 		var result = this.Create(Ay, Ax);
 		
-		var denum = maxval - minval;
-		
 		for (var y = 0; y < Ay; y++) {
 			for (var x = 0; x < Ax; x++) {
 				
-				result[y][x] = (A[y][x] - minval)/denum;
+				var denum = maxvals[x] - minvals[x];
+				
+				result[y][x] = (A[y][x] - minvals[x])/denum;
 			}
 		}
 		

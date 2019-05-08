@@ -1,6 +1,6 @@
 angular
-	.module('DeepLearning', ['ngWebworker'])
-	.controller('NeuralNetworksController', ['$scope', 'Webworker', function($scope, Webworker) {
+	.module('DeepLearning', ['ngWebworker', 'ngFileSaver'])
+	.controller('NeuralNetworksController', ['$scope', 'Webworker', 'FileSaver', 'Blob', function($scope, Webworker, FileSaver, Blob) {
 	
 		$scope.Network = {};
 		$scope.NetworkOptions = {};
@@ -365,6 +365,23 @@ angular
 			}
 		}
 		
+		$scope.SaveNetwork = function() {
+			
+			if ($scope.Network.Weights != undefined) {
+				
+				var json = { Weights: $scope.Network.Weights, Normalization: [ $scope.Network.Min, $scope.Network.Max ] };
+				var jsonse = JSON.stringify(json);
+				
+				var blob = new Blob([jsonse], {
+					
+					type: "application/json"
+					
+				});
+				
+				FileSaver.saveAs(blob, "Network.json");
+			}
+		}
+		
 	}]).directive("filelistBind", function() {
 		
 		return function( scope, elm, attrs ) {
@@ -381,6 +398,7 @@ angular
 				});
 			});
 		};
+		
 	}).directive("testfileBind", function() {
 		
 		return function( scope, elm, attrs ) {

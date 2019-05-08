@@ -8,6 +8,7 @@
 
 	<script src="js/angular.min.js"></script>
 	<script src="js/ng-webworker.min.js"></script>
+	<script src="js/angular-file-saver.bundle.min.js"></script>
 	<script src="js/NeuralNetwork.min.js"></script>
 </head>
 
@@ -125,13 +126,14 @@
 								<div class = "row">
 									<div class = "col">
 										<b>Minimum</b><br/>
-										<input class = "form-control" ng-model = "Network.Min" name="NetworkMin" value = "{{Network.Min}}" readonly /><br/>
+										<input type = "text" class = "form-control" ng-model = "Network.Min" name="NetworkMin" value = "{{PrettyPrint(Network.Min)}}" readonly /><br/>
 									</div>
 									<div class = "col">
 										<b>Maximum</b><br/>
-										<input class = "form-control" ng-model = "Network.Max" name="NetworkMax" value = "{{Network.Max}}" readonly /><br/><br/>
+										<input type = "text" class = "form-control" ng-model = "Network.Max" name="NetworkMax" value = "{{PrettyPrint(Network.Max)}}" readonly /><br/>
 									</div>
 								</div>
+								<input type="button" class="btn btn-outline-primary" value="Save Network" ng-click="SaveNetwork()" ng-disabled = "Training" /><br/><br/>
 							</div>
 						</div>
 					</div>
