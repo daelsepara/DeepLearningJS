@@ -9,7 +9,7 @@
 	<script src="js/angular.min.js"></script>
 	<script src="js/ng-webworker.min.js"></script>
 	<script src="js/angular-file-saver.bundle.min.js"></script>
-	<script src="js/NeuralNetwork.min.js"></script>
+	<script src="js/NeuralNetwork.js"></script>
 </head>
 
 <body>
@@ -54,7 +54,7 @@
 									<div class="col-sm-3">
 										<b>Hidden layers</b><br ng-show = "HiddenLayerNodes.length > 0"/><br/>
 										<ul class="list-group">
-											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}&nbsp;<input type="button" class = "btn btn-outline-danger float-right" value=" X " ng-click="RemoveHiddenLayer($index)" ng-disabled = "Training" /></li>
+											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}<br/><input type="button" class = "btn btn-outline-danger" value = " remove " ng-click="RemoveHiddenLayer($index)" ng-disabled = "Training" /></li>
 										</ul>
 										<br/>
 										<input type="button" class = "btn btn-outline-danger" value="Clear" ng-click="RemoveAllHiddenLayers()" ng-show = "HiddenLayerNodes.length > 0" ng-disabled = "Training"/>
@@ -132,8 +132,9 @@
 										<input type = "text" class = "form-control" ng-model = "Network.Max" name="NetworkMax" value = "{{PrettyPrint(Network.Max)}}" readonly /><br/>
 									</div>
 								</div>
-								<input type="button" class="btn btn-outline-primary" value="Save Network" ng-click="SaveNetwork()" ng-disabled = "Training" /><br/><br/>
+								<input type="button" class="btn btn-outline-primary" value="Save Network" ng-click="SaveNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Load Network" ng-click="LoadNetwork()" ng-disabled = "Training" />&nbsp;<input type="file" multiple name="files" networkfile-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 							</div>
+							<br/>
 						</div>
 					</div>
 				</div>

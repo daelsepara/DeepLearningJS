@@ -26,6 +26,7 @@ angular
 		
 		$scope.SelectedFile = {};
 		$scope.TestFile = {};
+		$scope.NetworkFile = {};
 		
 		$scope.DelimiterNames = ["Tab \\t", "Comma ,", "Space \\s", "Vertical Pipe |", "Colon :", "Semi-Colon ;", "Forward Slash /", '/', "Backward Slash \\"];
 		$scope.Delimiters = ['\t', ',', ' ', '|', ':', ';', '/', '\\'];
@@ -382,6 +383,46 @@ angular
 			}
 		}
 		
+		$scope.LoadNetwork = function() {
+			
+			$scope.Network = {};
+			$scope.Inputs = 0;
+			$scope.Categories = 0;
+			
+			var reader = new FileReader();
+
+			reader.onload = function(progressEvent) {
+
+				$scope.$apply(function() {
+					
+					var json = JSON.parse(reader.result);
+					
+					if (json.Weights != undefined && json.Normalization != undefined) {
+						
+						$scope.Network = { Weights: json.Weights, Min: json.Normalization[0], Max: json.Normalization[1] };
+						
+						$scope.Inputs = json.Weights[0][0].length - 1;
+						$scope.Categories = json.Weights[json.Weights.length - 1].length;
+						
+						$scope.HiddenLayerNodes = [];
+						
+						for (var i = 0; i < json.Weights.length - 1; i ++) {
+							
+							$scope.HiddenLayerNodes.push(json.Weights[i].length);
+						}
+						
+						$scope.NetworkOptions = { HiddenLayers: $scope.HiddenLayerNodes.length, Categories: $scope.Categories };
+						$scope.networkWeights = $scope.PrettyPrint(json.Weights);
+					}
+				});
+			}
+
+			if ($scope.NetworkFile.name != undefined) {
+				
+				reader.readAsText($scope.NetworkFile);
+			}
+		}
+		
 	}]).directive("filelistBind", function() {
 		
 		return function( scope, elm, attrs ) {
@@ -410,6 +451,19 @@ angular
 					scope[ attrs.name ] = evt.target.files;
 					scope['Samples'] = 0;
 					scope['TestFile'] = evt.target.files[0];
+				});
+			});
+		};
+	}).directive("networkfileBind", function() {
+		
+		return function( scope, elm, attrs ) {
+			
+			elm.bind("change", function( evt ) {
+				
+				scope.$apply(function( scope ) {
+					
+					scope[ attrs.name ] = evt.target.files;
+					scope['NetworkFile'] = evt.target.files[0];
 				});
 			});
 		};
