@@ -51,7 +51,7 @@
 						<div class="tab-pane fade" id="pills-training" role="tabpanel" aria-labelledby="pills-training-tab">
 							<div class="container border border-secondary rounded">
 								<div class="row">
-									<div class="col">
+									<div class="col-sm-3">
 										<b>Hidden layers</b><br ng-show = "HiddenLayerNodes.length > 0"/><br/>
 										<ul class="list-group">
 											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}&nbsp;<input type="button" class = "btn btn-outline-danger float-right" value=" X " ng-click="RemoveHiddenLayer($index)" ng-disabled = "Training" /></li>
@@ -65,7 +65,7 @@
 										</div>
 										<br/>
 									</div>
-									<div class="col">
+									<div class="col-sm-3">
 										<b>Learning rate (&alpha;)</b><br/>
 										<input class = "form-control" type="number" ng-model = "LearningRate" name="LearningRate" min="0.01" max="10" step = "0.01" value = "{{LearningRate}}" ng-disabled = "Training" /><br/><br/>
 										<b>Epochs</b><br/>
@@ -73,14 +73,13 @@
 										<b>Tolerance</b><br/>
 										<input class = "form-control" type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" ng-disabled = "Training" /><br/><br/>
 									</div>
-								</div>
-								<div class="row">
-									<div class="col">
+									<div class="col-sm-3">
+										<br/>
+										<progress class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ng-show = "TrainingProgress > 0 && TrainingProgress < 1" value="{{TrainingProgress}}"></progress><br/ ng-show = "TrainingProgress > 0 && TrainingProgress < 1">
 										<input type="button" class="btn btn-outline-primary" value="Train Network" ng-click="AsyncTrainer()" ng-disabled = "Training" ng-show = "!Training"/><br ng-show = "!Training"/><br ng-show = "!Training"/>
 										<input ng-show = "Training" type="button" class="btn btn-outline-danger" value="Stop" ng-click="StopAsyncTrainer()" /><br/><br/>
-										<progress class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ng-show = "TrainingProgress > 0 && TrainingProgress < 1" value="{{TrainingProgress}}"></progress><br/><br/>
 									</div>
-									<div class="col" ng-show = "TrainingProgress > 0.0">
+									<div class="col-sm-3" ng-show = "TrainingProgress > 0.0">
 										<b>Training Results</b><br/><br/>
 										<b>Training Error</b><br/>
 										<span>{{Network.Cost}}</span><br/><br/>
