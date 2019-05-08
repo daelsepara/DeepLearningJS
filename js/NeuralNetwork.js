@@ -35,6 +35,8 @@ angular
 		$scope.delimiter = $scope.DelimiterNames[0];
 		$scope.SelectedDelimiter = 0;
 		
+		$scope.ToggleNodeText = true;
+		
 		$scope.SelectDelimeter = function() {
 			
 			var i = $scope.DelimiterNames.indexOf($scope.delimiter);
@@ -531,11 +533,14 @@ angular
 					.attr("r", nodeSize)
 					.style("fill", function(d) { return color(d.layer); });
 
-				node.append("text")
-					.attr("text-anchor", "middle")
-					.attr("dx", "-.35em")
-					.attr("dy", ".35em")
-					.text(function(d) { return d.label; });
+				if ($scope.ToggleNodeText) {
+					
+					node.append("text")
+						.attr("text-anchor", "middle")
+						.attr("dx", "-.35em")
+						.attr("dy", ".35em")
+						.text(function(d) { return d.label; });
+				}
 			}
 		}
 		
