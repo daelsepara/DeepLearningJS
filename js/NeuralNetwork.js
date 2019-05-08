@@ -19,7 +19,7 @@ angular
 		$scope.LearningRate = 2.0;
 		$scope.Epochs = 10000;
 		$scope.Tolerance = 0.0001;
-		$scope.UseL2 = false;
+		$scope.UseL2 = true;
 
 		$scope.TestData = [];
 		$scope.Samples = 0;
