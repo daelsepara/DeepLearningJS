@@ -22,9 +22,6 @@ angular
 		$scope.Samples = 0;
 		$scope.Threshold = 0.9;
 		
-		$scope.TrainingUploadProgress = 0;
-		$scope.TestUploadProgress = 0;
-		
 		$scope.Training = false;
 		
 		$scope.SelectedFile = {};
@@ -55,6 +52,12 @@ angular
 			}
 		}
 		
+		$scope.RemoveAllHiddenLayers = function() {
+			
+			$scope.HiddenLayerNodes = [];
+		}
+
+		
 		$scope.ReadTestData = function() {
 			
 			$scope.TestData = [];
@@ -64,8 +67,6 @@ angular
 
 			reader.onload = function(progressEvent) {
 
-				$scope.TestUploadProgress = progressEvent.loaded / progressEvent.total;
-				
 				$scope.$apply(function() {
 					
 					var lines = reader.result.split('\n');
@@ -96,6 +97,7 @@ angular
 					}
 					
 					$scope.testContent = reader.result.trim();
+					
 				});
 			}
 
@@ -117,8 +119,6 @@ angular
 
 			reader.onload = function(progressEvent) {
 
-				$scope.TrainingUploadProgress = progressEvent.loaded / progressEvent.total;
-				
 				$scope.$apply(function() {
 					
 					var lines = reader.result.split('\n');
@@ -162,6 +162,7 @@ angular
 					}
 					
 					$scope.fileContent = reader.result.trim();
+					
 				});
 			}
 
@@ -224,6 +225,12 @@ angular
 			}
 		}
 
+		// https://stackoverflow.com/questions/26320525/prettify-json-data-in-textarea-input/26324037
+		$scope.PrettyPrint = function(json) {
+			
+			return JSON.stringify(json, undefined, 4);
+		}
+		
 		$scope.AsyncTrainer = function() {
 			
 			// function that will become a worker
@@ -269,6 +276,7 @@ angular
 					$scope.NetworkOptions = result.opts;
 					$scope.TrainingProgress = 1.0;
 					$scope.Training = false;
+					$scope.networkWeights = $scope.PrettyPrint($scope.Network.Weights);
 					
 				}, null, function(network) {
 					
@@ -366,7 +374,6 @@ angular
 				scope.$apply(function( scope ) {
 					
 					scope[ attrs.name ] = evt.target.files;
-					scope['TrainingUploadProgress'] = 0;
 					scope['Items'] = 0;
 					scope['Categories'] = 0;
 					scope['Inputs'] = 0;
@@ -383,7 +390,6 @@ angular
 				scope.$apply(function( scope ) {
 					
 					scope[ attrs.name ] = evt.target.files;
-					scope['TestUploadProgress'] = 0;
 					scope['Samples'] = 0;
 					scope['TestFile'] = evt.target.files[0];
 				});

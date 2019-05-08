@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex">
   <title>DeepLearningJS - Neural Networks</title>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+	<script src="js/angular.min.js"></script>
 	<script src="js/ng-webworker.min.js"></script>
 	<script src="js/NeuralNetwork.min.js"></script>
 </head>
@@ -27,6 +27,9 @@
 					  <li class="nav-item">
 						<a class="nav-link" id="pills-classify-tab" data-toggle="pill" href="#pills-classify" role="tab" aria-controls="pills-classify" aria-selected="false">Classify</a>
 					  </li>
+					  <li class="nav-item">
+						<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-classify" aria-selected="false">Network</a>
+					  </li>
 					</ul>
 					<div class="tab-content" id="pills-tabContent">
 						<div class="tab-pane fade show active" id="pills-data" role="tabpanel" aria-labelledby="pills-data-tab">
@@ -36,30 +39,32 @@
 								<b>delimiters</b><br/>
 								<select class="form-control" ng-model="delimiter" data-ng-options="x for x in DelimiterNames" ng-change="SelectDelimeter()" ng-disabled = "Training"></select><br/>
 								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTrainingData()" ng-disabled = "Training"/><br/><br/>
-								<progress class="progress progress-bar" role="progressbar" ng-show = "TrainingUploadProgress > 0" value="{{TrainingUploadProgress}}"></progress><br/><br/>
 								<textarea ng-model = "fileContent" rows="4" cols="60" style = "resize: none;" readonly ></textarea>
 								<br/><br/>
 								<div class="{{Items == 0 && Inputs == 0 && Categories == 0 ? 'alert alert-danger' : 'alert alert-success' }}" role="alert">
 									<span><b>Items</b>: {{Items}} <b>Input features</b>: {{Inputs}} <b>Categories</b>: {{Categories}}</span>
 								</div>
 							</div>
+							<br/>
 						</div>
 						<div class="tab-pane fade" id="pills-training" role="tabpanel" aria-labelledby="pills-training-tab">
 							<div class="container border border-secondary rounded">
 								<div class="row">
-									<div class="col-sm">
+									<div class="col">
 										<b>Hidden layers</b><br ng-show = "HiddenLayerNodes.length > 0"/><br/>
 										<ul class="list-group">
 											 <li class="list-group-item" ng-repeat="nodes in HiddenLayerNodes track by $index" class="">Layer {{$index + 1}} -> {{nodes}}&nbsp;<input type="button" class = "btn btn-outline-danger float-right" value=" X " ng-click="RemoveHiddenLayer($index)" ng-disabled = "Training" /></li>
 										</ul>
 										<br/>
+										<input type="button" class = "btn btn-outline-danger" value="Clear" ng-click="RemoveAllHiddenLayers()" ng-show = "HiddenLayerNodes.length > 0" ng-disabled = "Training"/>
+										<br ng-show = "HiddenLayerNodes.length > 0"/><br ng-show = "HiddenLayerNodes.length > 0"/>
 										<div>
-											<b>Nodes</b>&nbsp;<input class = "form-control" type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" /><br/><br/>
+											<b>Nodes</b>&nbsp;<input class = "form-control" type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" /><br/>
 											<input type="button" class = "btn btn-outline-success" value="add hidden layer" ng-click="AddHiddenLayer()" ng-disabled = "Training" />
 										</div>
 										<br/>
 									</div>
-									<div class="col-sm">
+									<div class="col">
 										<b>Learning rate (&alpha;)</b><br/>
 										<input class = "form-control" type="number" ng-model = "LearningRate" name="LearningRate" min="0.01" max="10" step = "0.01" value = "{{LearningRate}}" ng-disabled = "Training" /><br/><br/>
 										<b>Epochs</b><br/>
@@ -85,13 +90,13 @@
 									</div>
 								</div>
 							</div>
+							<br/>
 						</div>
 						<div class="tab-pane fade" id="pills-classify" role="tabpanel" aria-labelledby="pills-classify-tab">
 							<div class="container border border-secondary rounded">
 								<b>select file</b><br/>
 								<input type="file" multiple name="files" testfile-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTestData()" ng-disabled = "Training"/><br/><br/>
-								<progress class="progress progress-bar" role="progressbar" ng-show = "TestUploadProgress > 0" value="{{TestUploadProgress}}"></progress>
 								<div class = "row">
 									<div class = "col-sm">
 										<b>Test data</b><br/>
@@ -107,6 +112,24 @@
 										<b>Threshold</b><br/>
 										<input class = "form-control" type="number" ng-model = "Threshold" name="Threshold" min="0.01" max="1" step = "0.01" value = "{{Threshold}}" ng-disabled = "Training" /><br/>
 										<input type="button" class="btn btn-outline-primary" value="Classify" ng-click="AsyncClassifier()" ng-disabled = "Training" /><br/><br/>
+									</div>
+								</div>
+							</div>
+							<br/>
+						</div>
+						<div class="tab-pane fade" id="pills-network" role="tabpanel" aria-labelledby="pills-netework-tab">
+							<div class="container border border-secondary rounded">
+								<b>Network Weights</b><br/>
+								<textarea ng-model = "networkWeights" rows="10" cols="80" style = "resize: none;" readonly></textarea><br/><br/>
+								<b>Input Normalization</b><br/><br/>
+								<div class = "row">
+									<div class = "col">
+										<b>Minimum</b><br/>
+										<input class = "form-control" ng-model = "Network.Min" name="NetworkMin" value = "{{Network.Min}}" readonly /><br/>
+									</div>
+									<div class = "col">
+										<b>Maximum</b><br/>
+										<input class = "form-control" ng-model = "Network.Max" name="NetworkMax" value = "{{Network.Max}}" readonly /><br/><br/>
 									</div>
 								</div>
 							</div>
