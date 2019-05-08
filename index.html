@@ -10,7 +10,7 @@
 	<script src="js/ng-webworker.min.js"></script>
 	<script src="js/angular-file-saver.bundle.min.js"></script>
 	<script src="js/d3.min.js"></script>
-	<script src="js/NeuralNetwork.min.js"></script>
+	<script src="js/NeuralNetwork.js"></script>
 	<style>
 
 	text {
@@ -160,7 +160,7 @@
 						</div>
 						<div class="tab-pane fade" id="pills-graph" role="tabpanel" aria-labelledby="pills-graph-tab">
 							<div class="container border border-secondary rounded">
-								<br/><input type="button" class="btn btn-outline-primary" value="Render Network" ng-click="RenderNetwork()" ng-disabled = "Training" /><br/><br/>
+								<br/><input type="button" class="btn btn-outline-primary" value="Render Network" ng-click="RenderNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Save Render" ng-click="SaveRender()" ng-disabled = "Training" /><br/><br/>
 								<svg id='viz'></svg><br/><br/>
 							</div>
 							<br/><br/>

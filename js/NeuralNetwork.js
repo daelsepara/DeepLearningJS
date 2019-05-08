@@ -539,6 +539,37 @@ angular
 			}
 		}
 		
+		$scope.SaveRender = function() {
+			
+			var svg = $("#viz")[0].innerHTML;
+			
+			if (svg != undefined) {
+			
+				var style = '<svg><style type="text/css"> text { pointer-events: none; } .node:hover { stroke: #999; stroke-opacity: .6; stroke-width: 4px; } .link { stroke: #999; stroke-opacity: .6;	} </style>';
+				
+				svg = style + svg + "</svg>";
+				
+				//add name spaces.
+				if(!svg.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+					
+					svg = svg.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+				}
+			
+				if(!svg.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
+					
+					svg = svg.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+				}
+
+				var blob = new Blob([svg], {
+					
+					type: "image/svg+xml;charset=utf-8"
+					
+				});
+				
+				FileSaver.saveAs(blob, "Network.svg");
+			}
+		}
+		
 	}]).directive("filelistBind", function() {
 		
 		return function( scope, elm, attrs ) {
