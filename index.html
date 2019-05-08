@@ -162,7 +162,7 @@
 							<div class="container border border-secondary rounded">
 								<br/>
 								<div class="custom-control custom-checkbox">
-									<input type="checkbox" class="custom-control-input" id="ToggleNodeText" ng-model = "ToggleNodeText" ng-checked = "ToggleNodeText">
+									<input type="checkbox" class="custom-control-input" id="ToggleNodeText" ng-model = "ToggleNodeText" ng-checked = "ToggleNodeText" ng-disabled = "Training">
 									<label class="custom-control-label" for="ToggleNodeText">Render node labels</label>
 								</div>
 								<br/><input type="button" class="btn btn-outline-primary" value="Render Network" ng-click="RenderNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Save Render" ng-click="SaveRender()" ng-disabled = "Training" /><br/><br/>
