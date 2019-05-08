@@ -19,6 +19,7 @@ angular
 		$scope.LearningRate = 2.0;
 		$scope.Epochs = 10000;
 		$scope.Tolerance = 0.0001;
+		$scope.UseL2 = false;
 
 		$scope.TestData = [];
 		$scope.Samples = 0;
@@ -239,14 +240,14 @@ angular
 		$scope.AsyncTrainer = function() {
 			
 			// function that will become a worker
-			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes) {
+			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, useL2) {
 
 				importScripts(currentPath + "js/Models.min.js");
 				
 				var network = new DeepNeuralNetwork();
 				var normalizedData = network.Normalize(input);
 
-				var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, false);
+				var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, useL2);
 				
 				network.SetupHiddenLayers(normalizedData[0].length, opts.Categories, hiddenLayerNodes);
 				network.Setup(output, opts);
@@ -273,7 +274,7 @@ angular
 				$scope.asyncTrainer = Webworker.create(async, { async: true });
 
 				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
-				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes).then(function(result) {
+				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.UseL2).then(function(result) {
 					
 					// promise is resolved.
 

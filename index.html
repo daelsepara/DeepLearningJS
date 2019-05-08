@@ -93,7 +93,12 @@
 										<b>Epochs</b><br/>
 										<input class = "form-control" type="number" ng-model = "Epochs" name="Epochs" min="100" max="1000000" step = "100" value = "{{Epochs}}" ng-disabled = "Training" /><br/><br/>
 										<b>Tolerance</b><br/>
-										<input class = "form-control" type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" ng-disabled = "Training" /><br/><br/>
+										<input class = "form-control" type="number" ng-model = "Tolerance" name="Tolerance" min="0.00001" max="1" step = "0.00001" value = "{{Tolerance}}" ng-disabled = "Training" /><br/>
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input" id="UseL2" ng-model = "UseL2" ng-checked = "UseL2" ng-disabled = "Training">
+											<label class="custom-control-label" for="UseL2">Use L2 Error</label>
+										</div>
+										<br/>
 									</div>
 									<div class="col-sm-3">
 										<br/>
