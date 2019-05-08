@@ -9,7 +9,26 @@
 	<script src="js/angular.min.js"></script>
 	<script src="js/ng-webworker.min.js"></script>
 	<script src="js/angular-file-saver.bundle.min.js"></script>
-	<script src="js/NeuralNetwork.js"></script>
+	<script src="js/d3.min.js"></script>
+	<script src="js/NeuralNetwork.min.js"></script>
+	<style>
+
+	text {
+	  pointer-events: none;
+	}
+
+	.node:hover {
+	  stroke: #999;
+	  stroke-opacity: .6;
+	  stroke-width: 4px;
+	}
+
+	.link {
+	  stroke: #999;
+	  stroke-opacity: .6;
+	}
+
+	</style>
 </head>
 
 <body>
@@ -30,6 +49,9 @@
 					  </li>
 					  <li class="nav-item">
 						<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-classify" aria-selected="false">Network</a>
+					  </li>
+					  <li class="nav-item">
+						<a class="nav-link" id="pills-graph-tab" data-toggle="pill" href="#pills-graph" role="tab" aria-controls="pills-classify" aria-selected="false">Graph</a>
 					  </li>
 					</ul>
 					<div class="tab-content" id="pills-tabContent">
@@ -135,6 +157,13 @@
 								<input type="button" class="btn btn-outline-primary" value="Save Network" ng-click="SaveNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Load Network" ng-click="LoadNetwork()" ng-disabled = "Training" />&nbsp;<input type="file" multiple name="files" networkfile-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 							</div>
 							<br/>
+						</div>
+						<div class="tab-pane fade" id="pills-graph" role="tabpanel" aria-labelledby="pills-graph-tab">
+							<div class="container border border-secondary rounded">
+								<br/><input type="button" class="btn btn-outline-primary" value="Render Network" ng-click="RenderNetwork()" ng-disabled = "Training" /><br/><br/>
+								<svg id='viz'></svg><br/><br/>
+							</div>
+							<br/><br/>
 						</div>
 					</div>
 				</div>

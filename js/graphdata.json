@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    {"label": "i0", "layer": 1},
+    {"label": "i1", "layer": 1},
+    {"label": "h0", "layer": 2},
+    {"label": "i2", "layer": 1},
+    {"label": "h1", "layer": 2},
+    {"label": "h2", "layer": 2},
+    {"label": "h3", "layer": 2},
+    {"label": "o0", "layer": 3}
+  ]
+}

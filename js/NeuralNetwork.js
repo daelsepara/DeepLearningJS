@@ -1,5 +1,7 @@
+angular.module('d3', []).factory('d3Service', [function(){ return d3; }]);
+  
 angular
-	.module('DeepLearning', ['ngWebworker', 'ngFileSaver'])
+	.module('DeepLearning', ['ngWebworker', 'ngFileSaver', 'd3'])
 	.controller('NeuralNetworksController', ['$scope', 'Webworker', 'FileSaver', 'Blob', function($scope, Webworker, FileSaver, Blob) {
 	
 		$scope.Network = {};
@@ -420,6 +422,120 @@ angular
 			if ($scope.NetworkFile.name != undefined) {
 				
 				reader.readAsText($scope.NetworkFile);
+			}
+		}
+		
+		$scope.RenderNetwork = function() {
+		
+			if ($scope.Network.Weights != undefined) {
+				
+				var graph = { "nodes": [] };
+				
+				// build network
+				
+				// start with inputs
+				for (var i = 0; i < $scope.Inputs; i++) {
+					
+					graph.nodes.push({"label": "i[" + (i + 1).toString() + "]", "layer": 1});
+				}
+				
+				for (var i = 0; i < $scope.Network.Weights.length - 1; i++) {
+					
+					for (var x = 0; x <  $scope.Network.Weights[i].length ; x++) {
+							
+						graph.nodes.push({"label": "h[" + (i + 1).toString() + "][" + (x + 1).toString() + "]", "layer": i + 2});
+					}
+				}
+				
+				for (var i = 0; i < $scope.Categories; i++) {
+					
+					graph.nodes.push({"label": "o[" + (i + 1).toString() + "]", "layer": $scope.Network.Weights.length + 1});
+				}
+				
+				// render graph using d3.js - modified from: https://bl.ocks.org/e9t/6073cd95c2a515a9f0ba
+				var width = 960, height = 500, nodeSize = 30;
+				var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+				var svg = d3.select("#viz")
+					.attr("width", width)
+					.attr("height", height);
+
+				svg.selectAll("*").remove();
+				
+				var nodes = graph.nodes;
+				
+				// get network size
+				var netsize = {};
+					
+				nodes.forEach(function (d) {
+					
+					if(d.layer in netsize) {
+						
+						netsize[d.layer] += 1;
+						
+					} else {
+					  
+					  netsize[d.layer] = 1;
+					  
+					}
+					
+					d["lidx"] = netsize[d.layer];
+				});
+				
+				// calc distances between nodes
+				var largestLayerSize = Math.max.apply(null, Object.keys(netsize).map(function (i) { return netsize[i]; }));
+
+				var xdist = width / Object.keys(netsize).length, ydist = height / largestLayerSize;
+
+				// create node locations
+				nodes.map(function(d) {
+					
+					d["x"] = (d.layer - 0.5) * xdist;
+					d["y"] = (d.lidx - 0.5) * ydist;
+				});
+
+				// autogenerate links
+				var links = [];
+				
+				nodes.map(function(d, i) {
+					
+					for (var n in nodes) {
+						
+						if (d.layer + 1 == nodes[n].layer) {
+							
+							links.push({"source": parseInt(i), "target": parseInt(n), "value": 1}) }
+					}
+					
+				}).filter(function(d) { return typeof d !== "undefined"; });
+
+				// draw links
+				var link = svg.selectAll(".link")
+					.data(links)
+					.enter().append("line")
+					.attr("class", "link")
+					.attr("x1", function(d) { return nodes[d.source].x; })
+					.attr("y1", function(d) { return nodes[d.source].y; })
+					.attr("x2", function(d) { return nodes[d.target].x; })
+					.attr("y2", function(d) { return nodes[d.target].y; })
+					.style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+				// draw nodes
+				var node = svg.selectAll(".node")
+					.data(nodes)
+					.enter().append("g")
+					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; }
+				);
+
+				var circle = node.append("circle")
+					.attr("class", "node")
+					.attr("r", nodeSize)
+					.style("fill", function(d) { return color(d.layer); });
+
+				node.append("text")
+					.attr("text-anchor", "middle")
+					.attr("dx", "-.35em")
+					.attr("dy", ".35em")
+					.text(function(d) { return d.label; });
 			}
 		}
 		
