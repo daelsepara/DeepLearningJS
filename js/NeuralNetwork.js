@@ -36,7 +36,7 @@ angular
 		$scope.delimiter = $scope.DelimiterNames[0];
 		$scope.SelectedDelimiter = 0;
 		
-		$scope.ToggleNodeText = true;
+		$scope.ToggleNodeText = false;
 		
 		$scope.Width = 1024;
 		$scope.Height = 1024;
@@ -473,7 +473,7 @@ angular
 				
 				// get network size
 				var netsize = {};
-					
+				
 				nodes.forEach(function (d) {
 					
 					if(d.layer in netsize) {
@@ -489,6 +489,13 @@ angular
 					d["lidx"] = netsize[d.layer];
 				});
 				
+				var maxlidx = 0;
+				
+				for(var i = 0; i < nodes.length; i++) {
+					
+					maxlidx = Math.max(maxlidx, nodes[i].lidx);
+				}
+				
 				// calc distances between nodes
 				var largestLayerSize = Math.max.apply(null, Object.keys(netsize).map(function (i) { return netsize[i]; }));
 
@@ -498,7 +505,7 @@ angular
 				nodes.map(function(d) {
 					
 					d["x"] = (d.layer - 0.5) * xdist;
-					d["y"] = (d.lidx - 0.5) * ydist;
+					d["y"] = (Math.floor((maxlidx - netsize[d.layer]) / 2) + d.lidx - 0.5) * ydist;
 				});
 
 				// autogenerate links
