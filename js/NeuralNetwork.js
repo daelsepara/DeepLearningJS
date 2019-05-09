@@ -38,6 +38,10 @@ angular
 		
 		$scope.ToggleNodeText = true;
 		
+		$scope.Width = 1024;
+		$scope.Height = 1024;
+		$scope.NodeSize = 30;
+		
 		$scope.SelectDelimeter = function() {
 			
 			var i = $scope.DelimiterNames.indexOf($scope.delimiter);
@@ -456,7 +460,7 @@ angular
 				}
 				
 				// render graph using d3.js - modified from: https://bl.ocks.org/e9t/6073cd95c2a515a9f0ba
-				var width = 960, height = 500, nodeSize = 30;
+				var width = $scope.Width, height = $scope.Height, nodeSize = $scope.NodeSize;
 				var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 				var svg = d3.select("#viz")

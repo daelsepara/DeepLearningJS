@@ -82,7 +82,7 @@
 										<input type="button" class = "btn btn-outline-danger" value="Clear" ng-click="RemoveAllHiddenLayers()" ng-show = "HiddenLayerNodes.length > 0" ng-disabled = "Training"/>
 										<br ng-show = "HiddenLayerNodes.length > 0"/><br ng-show = "HiddenLayerNodes.length > 0"/>
 										<div>
-											<b>Nodes</b>&nbsp;<input class = "form-control" type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" /><br/>
+											<b>Nodes</b>&nbsp;<input class = "form-control" type="number" ng-model = "hiddenLayerNodes" name="hiddenLayerNodes" min="2" max="1024" value = "{{hiddenLayerNodes}}" ng-disabled = "Training"/><br/>
 											<input type="button" class = "btn btn-outline-success" value="add hidden layer" ng-click="AddHiddenLayer()" ng-disabled = "Training" />
 										</div>
 										<br/>
@@ -166,12 +166,29 @@
 						<div class="tab-pane fade" id="pills-graph" role="tabpanel" aria-labelledby="pills-graph-tab">
 							<div class="container border border-secondary rounded">
 								<br/>
-								<div class="custom-control custom-checkbox">
-									<input type="checkbox" class="custom-control-input" id="ToggleNodeText" ng-model = "ToggleNodeText" ng-checked = "ToggleNodeText" ng-disabled = "Training">
-									<label class="custom-control-label" for="ToggleNodeText">Render node labels</label>
+								<div class = "row">
+									<div class = "col">
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input" id="ToggleNodeText" ng-model = "ToggleNodeText" ng-checked = "ToggleNodeText" ng-disabled = "Training">
+											<label class="custom-control-label" for="ToggleNodeText">Render node labels</label>
+										</div>
+										<br/><input type="button" class="btn btn-outline-primary" value="Render Network" ng-click="RenderNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Save Render" ng-click="SaveRender()" ng-disabled = "Training" /><br/><br/>
+									</div>
 								</div>
-								<br/><input type="button" class="btn btn-outline-primary" value="Render Network" ng-click="RenderNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Save Render" ng-click="SaveRender()" ng-disabled = "Training" /><br/><br/>
-								<svg id='viz'></svg><br/><br/>
+								<div class = "row">
+									<div class = "col">
+										<b>Width</b><br/>
+										<input class = "form-control" type="number" ng-model = "Width" name="Width" min="640" max="1024" value = "{{Width}}" style = "width: 100px;" ng-disabled = "Training"/>
+										<b>Height</b><br/>
+										<input class = "form-control" type="number" ng-model = "Height" name="Height" min="640" max="1024" value = "{{Height}}" style = "width: 100px;" ng-disabled = "Training"/>
+										<b>Node Size</b><br/>
+										<input class = "form-control" type="number" ng-model = "NodeSize" name="NodeSize" min="20" max="100" value = "{{NodeSize}}" style = "width: 100px;" ng-disabled = "Training"/>
+									</div>
+								</div>
+								<div class = "row">
+									<svg id='viz'></svg><br/><br/>
+								</div>
+								<br/><br/>
 							</div>
 							<br/><br/>
 						</div>
