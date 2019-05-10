@@ -228,7 +228,7 @@ angular
 					
 				} catch (err) {
 					
-					$scope.asyncTrainer = null;
+					$scope.asyncClassifier = null;
 					
 					$scope.ClassifierProgress = 0.0;
 				}
