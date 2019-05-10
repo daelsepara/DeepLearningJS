@@ -201,7 +201,7 @@ class Optimizer {
         }
     }
     
-	Setup(network, input, X) {
+    Setup(network, input, X) {
 		
         this.s = Matrix.Create(X.length);
 
