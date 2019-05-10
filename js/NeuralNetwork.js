@@ -580,7 +580,7 @@ angular
 				nodes.map(function(d) {
 					
 					d["x"] = (d.layer - 0.5) * xdist;
-					d["y"] = (Math.floor((maxlidx - netsize[d.layer]) / 2) + d.lidx - 0.5) * ydist;
+					d["y"] = (((maxlidx - netsize[d.layer]) / 2) + d.lidx - 0.5) * ydist;
 				});
 
 				// autogenerate links
