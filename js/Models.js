@@ -684,7 +684,7 @@ class NeuralNetworkOptions {
 		this.HiddenLayers = hiddenLayers < 1 || hiddenLayers == undefined ? 1 : hiddenLayers;
 		this.UseL2 = useL2;
 	}
-}
+};
 
 class HiddenLayer {
 	

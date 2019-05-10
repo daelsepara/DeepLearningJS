@@ -104,7 +104,11 @@
 										<br/>
 										<progress class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ng-show = "TrainingProgress > 0 && TrainingProgress < 1" value="{{TrainingProgress}}"></progress><br/ ng-show = "TrainingProgress > 0 && TrainingProgress < 1">
 										<input type="button" class="btn btn-outline-primary" value="Train Network" ng-click="AsyncTrainer()" ng-disabled = "Training" ng-show = "!Training"/><br ng-show = "!Training"/><br ng-show = "!Training"/>
-										<input ng-show = "Training" type="button" class="btn btn-outline-danger" value="Stop" ng-click="StopAsyncTrainer()" /><br/><br/>
+										<input ng-show = "Training" type="button" class="btn btn-outline-danger" value="Stop" ng-click="StopAsyncTrainer()" /><br ng-show = "Training"/><br ng-show = "Training"/>
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input" id="UseOptimizer" ng-model = "UseOptimizer" ng-checked = "UseOptimizer" ng-disabled = "Training">
+											<label class="custom-control-label" for="UseOptimizer">Use Optimizer</label>
+										</div>
 									</div>
 									<div class="col-sm-3" ng-show = "TrainingProgress > 0.0">
 										<b>Training Results</b><br/><br/>

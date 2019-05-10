@@ -26,6 +26,7 @@ angular
 		$scope.Threshold = 0.9;
 		
 		$scope.Training = false;
+		$scope.UseOptimizer = false;
 		
 		$scope.SelectedFile = {};
 		$scope.TestFile = {};
@@ -243,64 +244,138 @@ angular
 		
 		$scope.AsyncTrainer = function() {
 			
-			// function that will become a worker
-			function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, useL2) {
+			if (!$scope.UseOptimizer) {
+				
+				// function that will become a worker
+				function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, useL2) {
 
-				importScripts(currentPath + "js/Models.min.js");
-				
-				var network = new DeepNeuralNetwork();
-				var normalizedData = network.Normalize(input);
-
-				var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, useL2);
-				
-				network.SetupHiddenLayers(normalizedData[0].length, opts.Categories, hiddenLayerNodes);
-				network.Setup(output, opts);
-				
-				// api to send a promise notification
-				while (!network.Step(normalizedData, opts)) {
+					importScripts(currentPath + "js/Models.min.js");
 					
-					if (network.Iterations % 1000 == 0)
-						notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
+					var network = new DeepNeuralNetwork();
+					var normalizedData = network.Normalize(input);
+
+					var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, useL2);
+					
+					network.SetupHiddenLayers(normalizedData[0].length, opts.Categories, hiddenLayerNodes);
+					network.Setup(output, opts);
+					
+					// api to send a promise notification
+					while (!network.Step(normalizedData, opts)) {
+						
+						if (network.Iterations % 1000 == 0)
+							notify({Iterations: network.Iterations, L2: network.L2, Cost: network.Cost});
+					}
+					
+					// api to resolve the promise. Note: according to the $q spec, 
+					// a promise cannot be used once it has been resolved or rejected.
+					complete({network: network, opts: opts});
 				}
 				
-				// api to resolve the promise. Note: according to the $q spec, 
-				// a promise cannot be used once it has been resolved or rejected.
-				complete({network: network, opts: opts});
-			}
-			
-			if (!$scope.Training && $scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
-				
-				var currentPath = document.URL;
-				
-				$scope.Training = true;
-				
-				// mark this worker as one that supports async notifications
-				$scope.asyncTrainer = Webworker.create(async, { async: true });
+				if (!$scope.Training && $scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
+					
+					var currentPath = document.URL;
+					
+					$scope.Training = true;
+					
+					// mark this worker as one that supports async notifications
+					$scope.asyncTrainer = Webworker.create(async, { async: true });
 
-				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
-				$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.UseL2).then(function(result) {
-					
-					// promise is resolved.
+					// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
+					$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.UseL2).then(function(result) {
+						
+						// promise is resolved.
 
-					$scope.Network = result.network;
-					$scope.NetworkOptions = result.opts;
-					$scope.TrainingProgress = 1.0;
-					$scope.Training = false;
-					$scope.networkWeights = $scope.PrettyPrint($scope.Network.Weights);
+						$scope.Network = result.network;
+						$scope.NetworkOptions = result.opts;
+						$scope.TrainingProgress = 1.0;
+						$scope.Training = false;
+						$scope.networkWeights = $scope.PrettyPrint($scope.Network.Weights);
+						
+					}, null, function(network) {
+						
+						// promise has a notification
+						$scope.TrainingProgress = network.Iterations / $scope.Epochs;
+						$scope.Network.L2 = network.L2;
+						$scope.Network.Iterations = network.Iterations;
+						$scope.Network.Cost = network.Cost;
+						
+					}).catch(function(oError) {
+						
+						$scope.asyncTrainer = null;
+						
+					});
+				}
+				
+			} else {
+				
+				// uses the Nonlinear Congugate Gradient Optimizer
+				 
+				// function that will become a worker
+				function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, useL2) {
+
+					importScripts(currentPath + "js/Models.min.js");
+					importScripts(currentPath + "js/Optimizer.min.js");
 					
-				}, null, function(network) {
+					var network = new DeepNeuralNetwork();
+					var normalizedData = network.Normalize(input);
+
+					var opts = new NeuralNetworkOptions(alpha, epochs, categories, normalizedData[0].length, normalizedData.length, tolerance, hiddenLayerNodes.length, useL2);
 					
-					// promise has a notification
-					$scope.TrainingProgress = network.Iterations / $scope.Epochs;
-					$scope.Network.L2 = network.L2;
-					$scope.Network.Iterations = network.Iterations;
-					$scope.Network.Cost = network.Cost;
+					network.SetupHiddenLayers(normalizedData[0].length, opts.Categories, hiddenLayerNodes);
 					
-				}).catch(function(oError) {
+					var optimizer = new Optimizer();
 					
-					$scope.asyncTrainer = null;
+					optimizer.SetupOptimizer(network, normalizedData, output, opts);
 					
-				});
+					// api to send a promise notification
+					while (!optimizer.StepOptimizer(network, normalizedData, opts)) {
+						
+						if (optimizer.Iterations % 100 == 0)
+							notify({Iterations: optimizer.Iterations, L2: network.L2, Cost: optimizer.Cost});
+					}
+					
+					network.Iterations = optimizer.Iterations;
+					network.Cost = optimizer.Cost;
+					
+					// api to resolve the promise. Note: according to the $q spec, 
+					// a promise cannot be used once it has been resolved or rejected.
+					complete({network: network, opts: opts});
+				}
+				
+				if (!$scope.Training && $scope.Items > 0 && $scope.Inputs > 0 && $scope.Categories > 0 && $scope.HiddenLayerNodes.length > 0 && $scope.TrainingData.length > 0 && $scope.Output.length > 0) {
+					
+					var currentPath = document.URL;
+					
+					$scope.Training = true;
+					
+					// mark this worker as one that supports async notifications
+					$scope.asyncTrainer = Webworker.create(async, { async: true });
+
+					// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
+					$scope.asyncTrainer.run(currentPath, $scope.TrainingData, $scope.Output, $scope.LearningRate, $scope.Epochs, $scope.Categories, $scope.Tolerance, $scope.HiddenLayerNodes, $scope.UseL2).then(function(result) {
+						
+						// promise is resolved.
+
+						$scope.Network = result.network;
+						$scope.NetworkOptions = result.opts;
+						$scope.TrainingProgress = 1.0;
+						$scope.Training = false;
+						$scope.networkWeights = $scope.PrettyPrint($scope.Network.Weights);
+						
+					}, null, function(network) {
+						
+						// promise has a notification
+						$scope.TrainingProgress = network.Iterations / $scope.Epochs;
+						$scope.Network.L2 = network.L2;
+						$scope.Network.Iterations = network.Iterations;
+						$scope.Network.Cost = network.Cost;
+						
+					}).catch(function(oError) {
+						
+						$scope.asyncTrainer = null;
+						
+					});
+				}
 			}
 		}
 		
@@ -309,7 +384,7 @@ angular
 			// function that will become a worker
 			function async(currentPath, test, trainedNetwork, opts, threshold) {
 
-				importScripts(currentPath + "js/Models.js");
+				importScripts(currentPath + "js/Models.min.js");
 				
 				var network = new DeepNeuralNetwork();
 				
