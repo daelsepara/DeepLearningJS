@@ -637,7 +637,7 @@ angular
 			
 			if (svg != undefined) {
 			
-				var style = '<svg><style type="text/css"> text { pointer-events: none; } .node:hover { stroke: #999; stroke-opacity: .6; stroke-width: 4px; } .link { stroke: #999; stroke-opacity: .6;	} </style>';
+				var style = '<svg><style type="text/css"> text { pointer-events: none; } .link { stroke: #999; stroke-opacity: 0.6; } </style>';
 				
 				svg = style + svg + "</svg>";
 				

@@ -17,17 +17,10 @@
 	  pointer-events: none;
 	}
 
-	.node:hover {
-	  stroke: #999;
-	  stroke-opacity: .6;
-	  stroke-width: 4px;
-	}
-
 	.link {
 	  stroke: #999;
-	  stroke-opacity: .6;
+	  stroke-opacity: 0.6;
 	}
-
 	</style>
 </head>
 
@@ -52,6 +45,9 @@
 					  </li>
 					  <li class="nav-item">
 						<a class="nav-link" id="pills-graph-tab" data-toggle="pill" href="#pills-graph" role="tab" aria-controls="pills-classify" aria-selected="false">Graph</a>
+					  </li>
+  					  <li class="nav-item">
+						<a class="nav-link" id="pills-guide-tab" data-toggle="pill" href="#pills-guide" role="tab" aria-controls="pills-guide" aria-selected="false">Guide</a>
 					  </li>
 					</ul>
 					<div class="tab-content" id="pills-tabContent">
@@ -196,6 +192,47 @@
 								<br/><br/>
 							</div>
 							<br/><br/>
+						</div>
+						<div class="tab-pane fade" id="pills-guide" role="tabpanel" aria-labelledby="pills-guide-tab">
+							<div class="container border border-secondary rounded">
+								<h2><b class = "text-primary">Data</b></h2>
+								<p>Data is loaded from a text file. To begin, select the file by clicking on the "Browse" button and choose the file you want to process on the dialog window that appears. Select the delimiter type. Once a file is and the delimiter is selected, click on the "Process Data" button to begin the loading and processing of the training data.</p>
+								<p>Each line in the file is a training example with one or more features followed by its the classification category. Each of these values are separated by a delimiter, e.g. tabs, spaces, commas, etc.</p>
+								<div class = "alert-primary">
+									<p class = "text-primary"><b>Example 1</b></p>
+									<p class = "text-secondary"><b>0,1,1</b></p>
+								</div>
+								<p>In the above example, the line contains 3 values separated by a comma delimiter. This means that the training example has 2 features (0, 1) and its classification category is 1.</p>
+								<div class = "alert-primary">
+									<p class = "text-primary"><b>Example 2</b></p>
+									<p class = "text-secondary"><b>8.55&nbsp;26.3&nbsp;2</b></p>
+								</div>
+								<p>Example 2 also has 2 features (8.55, 26.3) and a classification category of 2, separated by spaces</p>
+								<p>If there are several examples provided in the text file, it will estimate the number of categories. If the text file loading and processing succeeded, the status indicator will look similar to the one below:</p>
+								<div class="alert alert-success" role="alert">
+									<span><b>Items</b>: 788 <b>Input features</b>: 2 <b>Categories</b>: 7</span>
+								</div>
+								<p>A failure in the loading and processing is also similarly indicated:</p>
+								<div class="alert alert-danger" role="alert">
+									<span><b>Items</b>: 0 <b>Input features</b>: 0 <b>Categories</b>: 0</span>
+								</div>
+								<p>Most loading and processing errors that occur are due to the mismatch between the chosen delimiter and the one used by the file.</p>
+								<h2><b class = "text-primary">Training</b></h2>
+								<p>The Training page is where the neural network is constructed. A neural network is composed of an input layer, one to several hidden layers, and an output layer. The input and output layers are automatically generated based on the data loaded in the previous page. To add a hidden layer, choose the number of input nodes and click on the "add hidden layer" button.</p>
+								<b class = "text-primary">What is a reasonable number of hidden layers and nodes (per layer)?</b>
+								<p>There is (still) no definitive or standard way to configure a neural network. A neural network with several hidden layers, e.g. > 3, with lots of neurons will generally take longer to train. Since inputs from previous layers are mapped into succeeding layers up to the final output layer, the number of nodes in each intermediate hidden layer should at least be equal to or greater than the number of output nodes in the previous layers. One resonabily sized hidden layer is often sufficient for most problems but you can also try experimenting until you find which conguration gives the best performance in terms of run times, classification accuracies, etc.</p>
+								<b class = "text-primary">Epoch, Tolerance, Learning Rate, L2 Error</b>
+								<p>These are all related to the Training's stop condition. Training stops when it has reached the maximum number of iterations (Epoch) or if the error or cost function is below the Tolerance level. Learning rate sets the speed at which the network "learns" or adapts each iteration.</p>
+								<p>Two types of errors are computed, the cross-entropy error and the mean square error or simply, the L2 error. This web application uses the L2 by default.</p>
+								<b class = "text-primary">Optimizer</b>
+								<p>Access to a Nonlinear Conjugate Gradient optimizer is also provided. This is enabled by clicking on the "Use Optimizer" check box. When using an optimizer, the training generally converges much faster. However, at the moment the optimizer uses the cross-entropy error function regardless of whether L2 error is selected or not.</p>
+								<h2><b class = "text-primary">Classify</b></h2>
+								<p>Test data is also loaded from a text file similarly. Select the file by clicking on the "Browse" button and choose the file you want to process on the dialog window that appears. Click on the "Process data" to load the test data. Similar success or failure indicators are also shown based on the results of the loading process. Set the classification threshold and click on the "Classify" button to classify the loaded test data. The threshold value indicates the minimum prediction score required to classify one sample into a specific category.</p>
+								<h2><b class = "text-primary">Network</b></h2>
+								<p>Trained neural network parameters are viewable in this page. You can also save or load these trained network parameters to/from a JSON file. This JSON file is fully compatible with the <a href = "https://github.com/daelsepara/DeepNeuralNetworkClassifier" target = _blank >Deep Neural Network Classifier</a> software and can be used interchangeably with that program.</p>
+								<h2><b class = "text-primary">Graph</b></h2>
+								<p>View the current neural network architecture or save it as a scalable vector graphics (SVG) file.</p>
+							</div>
 						</div>
 					</div>
 				</div>
