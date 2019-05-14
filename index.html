@@ -54,9 +54,9 @@
 						<div class="tab-pane fade show active" id="pills-data" role="tabpanel" aria-labelledby="pills-data-tab">
 							<div class="container border border-secondary rounded">
 								<b>select file</b><br/>
-								<input type="file" multiple name="files" filelist-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
+								<input type="file" multiple name="files" input-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 								<b>delimiters</b><br/>
-								<select class="form-control" ng-model="delimiter" data-ng-options="x for x in DelimiterNames" ng-change="SelectDelimeter()" ng-disabled = "Training"></select><br/>
+								<select class="form-control" ng-model="delimiter" data-ng-options="x for x in DelimiterNames" ng-change="SelectDelimiter()" ng-disabled = "Training"></select><br/>
 								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTrainingData()" ng-disabled = "Training"/><br/><br/>
 								<textarea ng-model = "fileContent" rows="4" cols="60" style = "resize: none;" readonly ></textarea>
 								<br/><br/>
@@ -122,7 +122,7 @@
 						<div class="tab-pane fade" id="pills-classify" role="tabpanel" aria-labelledby="pills-classify-tab">
 							<div class="container border border-secondary rounded">
 								<b>select file</b><br/>
-								<input type="file" multiple name="files" testfile-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
+								<input type="file" multiple name="files" test-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 								<input type="button" class="btn btn-outline-primary" value="Process data" ng-click="ReadTestData()" ng-disabled = "Training"/><br/><br/>
 								<div class = "row">
 									<div class = "col-sm">
@@ -159,7 +159,7 @@
 										<input type = "text" class = "form-control" ng-model = "Network.Max" name="NetworkMax" value = "{{PrettyPrint(Network.Max)}}" readonly /><br/>
 									</div>
 								</div>
-								<input type="button" class="btn btn-outline-primary" value="Save Network" ng-click="SaveNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Load Network" ng-click="LoadNetwork()" ng-disabled = "Training" />&nbsp;<input type="file" multiple name="files" networkfile-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
+								<input type="button" class="btn btn-outline-primary" value="Save Network" ng-click="SaveNetwork()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Load Network" ng-click="LoadNetwork()" ng-disabled = "Training" />&nbsp;<input type="file" multiple name="files" network-bind class="btn btn-outline-secondary" ng-disabled = "Training" /><br/><br/>
 							</div>
 							<br/>
 						</div>

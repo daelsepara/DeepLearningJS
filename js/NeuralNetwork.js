@@ -43,7 +43,7 @@ angular
 		$scope.Height = 1024;
 		$scope.NodeSize = 30;
 		
-		$scope.SelectDelimeter = function() {
+		$scope.SelectDelimiter = function() {
 			
 			var i = $scope.DelimiterNames.indexOf($scope.delimiter);
 			
@@ -82,13 +82,13 @@ angular
 					
 					var lines = reader.result.split('\n');
 					
-					var delim = $scope.SelectedDelimiter > 0 ? $scope.Delimiters[$scope.SelectedDelimiter - 1] : "\t";
+					var delimiter = $scope.SelectedDelimiter > 0 ? $scope.Delimiters[$scope.SelectedDelimiter - 1] : "\t";
 					
 					for (var line = 0; line < lines.length; line++) {
 
 						var tmp = [];
 
-						var tokens = lines[line].trim().split(delim);
+						var tokens = lines[line].trim().split(delimiter);
 
 						if (tokens.length >= $scope.Inputs) {
 							
@@ -134,13 +134,13 @@ angular
 					
 					var lines = reader.result.split('\n');
 					
-					var delim = $scope.SelectedDelimiter > 0 ? $scope.Delimiters[$scope.SelectedDelimiter - 1] : "\t";
+					var delimiter = $scope.SelectedDelimiter > 0 ? $scope.Delimiters[$scope.SelectedDelimiter - 1] : "\t";
 					
 					for (var line = 0; line < lines.length; line++) {
 
 						var tmp = [];
 
-						var tokens = lines[line].trim().split(delim);
+						var tokens = lines[line].trim().split(delimiter);
 
 						if (tokens.length > 0) {
 							
@@ -294,6 +294,7 @@ angular
 					}, null, function(network) {
 						
 						// promise has a notification
+
 						$scope.TrainingProgress = network.Iterations / $scope.Epochs;
 						$scope.Network.L2 = network.L2;
 						$scope.Network.Iterations = network.Iterations;
@@ -308,7 +309,7 @@ angular
 				
 			} else {
 				
-				// uses the Nonlinear Congugate Gradient Optimizer
+				// uses the Nonlinear Conjugate Gradient Optimizer
 				 
 				// function that will become a worker
 				function async(currentPath, input, output, alpha, epochs, categories, tolerance, hiddenLayerNodes, useL2) {
@@ -365,6 +366,7 @@ angular
 					}, null, function(network) {
 						
 						// promise has a notification
+
 						$scope.TrainingProgress = network.Iterations / $scope.Epochs;
 						$scope.Network.L2 = network.L2;
 						$scope.Network.Iterations = network.Iterations;
@@ -415,7 +417,8 @@ angular
 				// uses the native $q style notification: https://docs.angularjs.org/api/ng/service/$q
 				$scope.asyncClassifier.run(currentPath, $scope.TestData, $scope.Network, $scope.NetworkOptions, $scope.Threshold).then(function(result) {
 					
-					// promise is resolved.
+					// promise is resolved
+
 					$scope.classificationResult = '';
 					
 					if (result.classification != undefined) {
@@ -455,9 +458,9 @@ angular
 			if ($scope.Network.Weights != undefined) {
 				
 				var json = { Weights: $scope.Network.Weights, Normalization: [ $scope.Network.Min, $scope.Network.Max ] };
-				var jsonse = JSON.stringify(json);
+				var jsonString = JSON.stringify(json);
 				
-				var blob = new Blob([jsonse], {
+				var blob = new Blob([jsonString], {
 					
 					type: "application/json"
 					
@@ -535,6 +538,7 @@ angular
 				}
 				
 				// render graph using d3.js - modified from: https://bl.ocks.org/e9t/6073cd95c2a515a9f0ba
+
 				var width = $scope.Width, height = $scope.Height, nodeSize = $scope.NodeSize;
 				var color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -547,43 +551,44 @@ angular
 				var nodes = graph.nodes;
 				
 				// get network size
-				var netsize = {};
+
+				var netSize = {};
 				
 				nodes.forEach(function (d) {
 					
-					if(d.layer in netsize) {
+					if(d.layer in netSize) {
 						
-						netsize[d.layer] += 1;
+						netSize[d.layer] += 1;
 						
 					} else {
 					  
-					  netsize[d.layer] = 1;
+					  netSize[d.layer] = 1;
 					  
 					}
 					
-					d["lidx"] = netsize[d.layer];
+					d["layerIndex"] = netSize[d.layer];
 				});
 				
-				var maxlidx = 0;
+				var maxIndex = 0;
 				
 				for(var i = 0; i < nodes.length; i++) {
 					
-					maxlidx = Math.max(maxlidx, nodes[i].lidx);
+					maxIndex = Math.max(maxIndex, nodes[i].layerIndex);
 				}
 				
 				// calc distances between nodes
-				var largestLayerSize = Math.max.apply(null, Object.keys(netsize).map(function (i) { return netsize[i]; }));
+				var largestLayerSize = Math.max.apply(null, Object.keys(netSize).map(function (i) { return netSize[i]; }));
 
-				var xdist = width / Object.keys(netsize).length, ydist = height / largestLayerSize;
+				var xDistance = width / Object.keys(netSize).length, yDistance = height / largestLayerSize;
 
 				// create node locations
 				nodes.map(function(d) {
 					
-					d["x"] = (d.layer - 0.5) * xdist;
-					d["y"] = (((maxlidx - netsize[d.layer]) / 2) + d.lidx - 0.5) * ydist;
+					d["x"] = (d.layer - 0.5) * xDistance;
+					d["y"] = (((maxIndex - netSize[d.layer]) / 2) + d.layerIndex - 0.5) * yDistance;
 				});
 
-				// autogenerate links
+				// auto-generate links
 				var links = [];
 				
 				nodes.map(function(d, i) {
@@ -598,6 +603,7 @@ angular
 				}).filter(function(d) { return typeof d !== "undefined"; });
 
 				// draw links
+
 				var link = svg.selectAll(".link")
 					.data(links)
 					.enter().append("line")
@@ -609,6 +615,7 @@ angular
 					.style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
 				// draw nodes
+
 				var node = svg.selectAll(".node")
 					.data(nodes)
 					.enter().append("g")
@@ -641,7 +648,8 @@ angular
 				
 				svg = style + svg + "</svg>";
 				
-				//add name spaces.
+				// add name spaces
+
 				if(!svg.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
 					
 					svg = svg.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
@@ -662,7 +670,7 @@ angular
 			}
 		}
 		
-	}]).directive("filelistBind", function() {
+	}]).directive("inputBind", function() {
 		
 		return function( scope, elm, attrs ) {
 			
@@ -679,7 +687,7 @@ angular
 			});
 		};
 		
-	}).directive("testfileBind", function() {
+	}).directive("testBind", function() {
 		
 		return function( scope, elm, attrs ) {
 			
@@ -693,7 +701,7 @@ angular
 				});
 			});
 		};
-	}).directive("networkfileBind", function() {
+	}).directive("networkBind", function() {
 		
 		return function( scope, elm, attrs ) {
 			
