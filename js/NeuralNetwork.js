@@ -43,6 +43,9 @@ angular
 		$scope.Height = 1024;
 		$scope.NodeSize = 30;
 		
+		$scope.PlotWidth = 1024;
+		$scope.PlotHeight = 1024;
+		
 		$scope.SelectDelimiter = function() {
 			
 			var i = $scope.DelimiterNames.indexOf($scope.delimiter);
@@ -657,7 +660,7 @@ angular
 			
 				if(!svg.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
 					
-					svg = svg.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+					svg = svg.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="' + $scope.Width.toString() + 'px" height="' + $scope.Height.toString() + 'px"');
 				}
 
 				var blob = new Blob([svg], {
@@ -670,6 +673,96 @@ angular
 			}
 		}
 		
+		$scope.RenderTestData = function() {
+			
+			if ($scope.TestData.length > 0 && $scope.Classification.length > 0 && $scope.Classification.length ==  $scope.TestData.length && $scope.Network.Min != undefined && $scope.Network.Max != undefined) {
+
+				var width = $scope.PlotWidth, height = $scope.PlotHeight;
+
+				var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+				var svg = d3.select("#plot")
+					.attr("width", width)
+					.attr("height", height);
+
+				svg.selectAll("*").remove();
+
+				// create scale objects
+				var xScale = d3.scaleLinear()
+					.domain([0,  1])
+					.range([0.1*width, 0.8*width]);
+			  
+				var yScale = d3.scaleLinear()
+					.domain([0, 1])
+					.range([0.8*height, 0.1*height]);
+				
+				var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+				// draw data points
+				var points_g = svg.append("g")
+					.classed("points_g", true);
+				
+				data = processData($scope.TestData, $scope.Classification, $scope.Network.Min, $scope.Network.Max);
+				
+				var points = points_g.selectAll("circle").data(data);
+
+				points = points.enter().append("circle")
+					.attr('cx', function(d) {return xScale(d.x)})
+              		.attr('cy', function(d) {return yScale(d.y)})
+              		.attr('r', 5)
+              		.style("fill", function(d) { return color(d.color); });
+
+				function processData(test, classification, min, max) {
+					
+					var data = [];
+					var n = test.length;
+
+					for (i = 0; i < n; i++) {
+
+						var dataPoint = {};
+
+						dataPoint["x"] = (test[i][0] - min[0]) / (max[0] - min[0]);
+						dataPoint["y"] = (test[i][1] - min[1]) / (max[1] - min[1]);
+						dataPoint["color"] = classification[i];
+						
+						data.push(dataPoint);
+					}
+
+					return data;
+				}
+			}
+		}
+		
+		$scope.SaveRenderedData = function() {
+			
+			var svg = $("#plot")[0].innerHTML;
+			
+			if (svg != undefined) {
+			
+				svg = "<svg>" + svg + "</svg>";
+				
+				// add name spaces
+
+				if(!svg.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+					
+					svg = svg.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+				}
+			
+				if(!svg.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
+					
+					svg = svg.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="' + $scope.PlotWidth.toString() + 'px" height="' + $scope.PlotHeight.toString() + 'px"');
+				}
+
+				var blob = new Blob([svg], {
+					
+					type: "image/svg+xml;charset=utf-8"
+					
+				});
+				
+				FileSaver.saveAs(blob, "Classification.svg");
+			}
+		}
+
 	}]).directive("inputBind", function() {
 		
 		return function( scope, elm, attrs ) {

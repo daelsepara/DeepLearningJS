@@ -10,7 +10,7 @@
 	<script src="js/ng-webworker.min.js"></script>
 	<script src="js/angular-file-saver.bundle.min.js"></script>
 	<script src="js/d3.min.js"></script>
-	<script src="js/NeuralNetwork.min.js"></script>
+	<script src="js/NeuralNetwork.js"></script>
 	<style>
 
 	text {
@@ -41,10 +41,13 @@
 						<a class="nav-link" id="pills-classify-tab" data-toggle="pill" href="#pills-classify" role="tab" aria-controls="pills-classify" aria-selected="false">Classify</a>
 					  </li>
 					  <li class="nav-item">
-						<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-classify" aria-selected="false">Network</a>
+						<a class="nav-link" id="pills-network-tab" data-toggle="pill" href="#pills-network" role="tab" aria-controls="pills-network" aria-selected="false">Network</a>
 					  </li>
 					  <li class="nav-item">
-						<a class="nav-link" id="pills-graph-tab" data-toggle="pill" href="#pills-graph" role="tab" aria-controls="pills-classify" aria-selected="false">Graph</a>
+						<a class="nav-link" id="pills-graph-tab" data-toggle="pill" href="#pills-graph" role="tab" aria-controls="pills-graph" aria-selected="false">Graph</a>
+					  </li>
+  					  <li class="nav-item">
+						<a class="nav-link" id="pills-plot-tab" data-toggle="pill" href="#pills-plot" role="tab" aria-controls="pills-plot" aria-selected="false">Plot</a>
 					  </li>
   					  <li class="nav-item">
 						<a class="nav-link" id="pills-guide-tab" data-toggle="pill" href="#pills-guide" role="tab" aria-controls="pills-guide" aria-selected="false">Guide</a>
@@ -188,6 +191,30 @@
 								</div>
 								<div class = "row">
 									<svg id='viz'></svg><br/><br/>
+								</div>
+								<br/><br/>
+							</div>
+							<br/><br/>
+						</div>
+						<div class="tab-pane fade" id="pills-plot" role="tabpanel" aria-labelledby="pills-plot-tab">
+							<div class="container border border-secondary rounded">
+								<br/>
+								<div class = "row">
+									<div class = "col">
+										<input type="button" class="btn btn-outline-primary" value="Render Test Data" ng-click="RenderTestData()" ng-disabled = "Training" />&nbsp;<input type="button" class="btn btn-outline-success" value="Save Render" ng-click="SaveRenderedData()" ng-disabled = "Training" /><br/><br/>
+									</div>
+								</div>
+								<div class = "row">
+									<div class = "col">
+										<b>Width</b><br/>
+										<input class = "form-control" type="number" ng-model = "PlotWidth" name="PlotWidth" min="640" max="1024" value = "{{PlotWidth}}" style = "width: 100px;" ng-disabled = "Training"/>
+										<b>Height</b><br/>
+										<input class = "form-control" type="number" ng-model = "PlotHeight" name="PlotHeight" min="640" max="1024" value = "{{PlotHeight}}" style = "width: 100px;" ng-disabled = "Training"/>
+										<br/>
+									</div>
+								</div>
+								<div class = "row">
+									<svg id='plot'></svg><br/><br/>
 								</div>
 								<br/><br/>
 							</div>
