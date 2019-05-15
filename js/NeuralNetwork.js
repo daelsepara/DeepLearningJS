@@ -676,7 +676,9 @@ angular
 		$scope.RenderTestData = function() {
 			
 			if ($scope.TestData.length > 0 && $scope.Classification.length > 0 && $scope.Classification.length ==  $scope.TestData.length && $scope.Network.Min != undefined && $scope.Network.Max != undefined) {
-
+				
+				// modified scatter plot example - https://bl.ocks.org/aleereza/d2be3d62a09360a770b79f4e5527eea8
+				
 				var width = $scope.PlotWidth, height = $scope.PlotHeight;
 
 				var color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -702,7 +704,7 @@ angular
 				var points_g = svg.append("g")
 					.classed("points_g", true);
 				
-				data = processData($scope.TestData, $scope.Classification, $scope.Network.Min, $scope.Network.Max);
+				data = generatePointsData($scope.TestData, $scope.Classification, $scope.Network.Min, $scope.Network.Max);
 				
 				var points = points_g.selectAll("circle").data(data);
 
@@ -712,7 +714,7 @@ angular
               		.attr('r', 5)
               		.style("fill", function(d) { return color(d.color); });
 
-				function processData(test, classification, min, max) {
+				function generatePointsData(test, classification, min, max) {
 					
 					var data = [];
 					var n = test.length;
