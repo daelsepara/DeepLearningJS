@@ -110,7 +110,7 @@ class Matrix {
 			
 			for (var x = 0; x < srcx; x++) {
 				
-				dst[x][0] = [src[0][x]];
+				dst[x][0] = src[0][x];
 			}
 			
 			return dst;
@@ -163,6 +163,26 @@ class Matrix {
 			return result;
 		}
 	}
+
+	// element by element multiplication (vector)
+	static MultiplyVector(A, B) {
+		
+		var Ax = A.length;
+		var Bx = B.length;
+		
+		if (Ax == Bx) {
+			
+			var result = this.Create(Ax);
+
+			for (var x = 0; x < Ax; x++) {
+				
+				result[x] = A[x] * B[x];
+			}
+			
+			return result;
+		}
+	}
+
 	
 	// matrix * constant multiplication
 	static MultiplyConstant(A, constant = 1.0) {
@@ -535,18 +555,30 @@ class Matrix {
 		return result;
 	}
 
+	static Column(x) {
+
+		var result = this.Create(x.length, 1);
+
+		for (var y = 0; y < x.length; y++) {
+
+			result[y][0] = x[y]; 
+		}
+
+		return result;
+	}
+
 	// get sum of elements per row
 	static RowSums(A) {
 		
-		var result = this.Create(A.length);
+		var result = this.Create(A.length, 1);
 
 		for (var i = 0; i < A.length; i++) {
 			
-			result[i] = 0.0;
+			result[i][0] = 0.0;
 
 			for (var j = 0; j < A[0].length; j++) {
 				
-				result[i] += A[i][j];
+				result[i][0] += A[i][j];
 			}
 		}
 
@@ -556,15 +588,15 @@ class Matrix {
 	// get sum of elements per column
 	static ColSums(A) {
 		
-		var result = this.Create(A[0].length);
+		var result = this.Create(1, A[0].length);
 
 		for (var j = 0; j < A[0].length; j++) {
 			
-			result[j] = 0.0;
+			result[0][j] = 0.0;
 
 			for (var i = 0; i < A.length; i++) {
 				
-				result[j] += A[i][j];
+				result[0][j] += A[i][j];
 			}
 		}
 
@@ -606,6 +638,46 @@ class Matrix {
 		return result;	
 	}
 	
+	static Pow(A, power) {
+
+		var Ax = A[0].length, Ay = A.length;
+
+		var result = this.Create(Ay, Ax);
+
+		for (var y = 0; y < Ay; y++) {
+			for (var x = 0; x < Ax; x++) {
+				
+				result[y][x] = Math.pow(A[y][x], power);
+			}
+		}
+			
+		return result;
+	}
+
+	static Powers(A, powers) {
+		
+		var px = powers[0].length, py = powers.length;
+
+		var result = this.Create(py, px);
+
+		for (var y = 0; y < py; y++) {
+			for (var x = 0; x < px; x++) {
+				
+				result[y][x] = Math.pow(A, powers[y][x]);
+			}
+		}
+
+		return result;
+	}
+	
+	static SetVector(A, value = 0.0) {
+		
+		for (var x = 0; x < A.length; x++) {
+			
+			A[x] = value;
+		}
+	}
+
 	static Set(A, value = 0.0) {
 		
 		var Ax = A[0].length, Ay = A.length;
