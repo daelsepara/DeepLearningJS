@@ -241,7 +241,9 @@ class Matrix {
 	
 	// matrix summation
 	static Sum(A) {
-		
+
+		var Ax = A[0].length, Ay = A.length;
+
 		var sum = 0.0;
 
 		for (var y = 0; y < Ay; y++) {
@@ -257,6 +259,8 @@ class Matrix {
 	// get sum of squares of each element
 	static SquareSum(A) {
 		
+		var Ax = A[0].length, Ay = A.length;
+
 		var sum = 0.0;
 
 		for (var y = 0; y < Ay; y++) {
@@ -535,11 +539,11 @@ class Matrix {
 	}
 	
 	// Transforms x into a column vector
-	static Vector(x) {
+	static Vector(A) {
 		
-		var temp = this.Transpose(x);
+		var temp = this.Transpose(A);
 
-		var result = this.Create(x.length * x[0].length);
+		var result = this.Create(A.length * A[0].length);
 		
 		var i = 0;
 		
@@ -741,7 +745,7 @@ class Matrix {
 		
 		return result;
 	}
-};
+}
 
 class NeuralNetworkOptions {
 	
@@ -756,7 +760,7 @@ class NeuralNetworkOptions {
 		this.HiddenLayers = hiddenLayers < 1 || hiddenLayers == undefined ? 1 : hiddenLayers;
 		this.UseL2 = useL2;
 	}
-};
+}
 
 class HiddenLayer {
 	
@@ -765,7 +769,7 @@ class HiddenLayer {
 		this.Inputs = inputs;
 		this.Outputs = outputs;
 	}
-};
+}
 
 class DeepNeuralNetwork {
 
@@ -1147,4 +1151,4 @@ class DeepNeuralNetwork {
 		
 		return normalize;
 	}
-};
+}
