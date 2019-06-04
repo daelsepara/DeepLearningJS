@@ -57,7 +57,7 @@ class Matrix {
 			
 			for (var y = 0; y < dst.length; y++) {
 				
-				this.MemCopy(dst[y], 0, src[y], minx, dst[0].length);
+				this.MemCopy(dst[y], 0, src[miny + y], minx, dst[0].length);
 			}
 		}
 	}
@@ -69,7 +69,7 @@ class Matrix {
 			
 			for (var y = 0; y < src.length; y++) {
 				
-				this.MemCopy(dst[y], minx, src[y], 0, src[0].length);
+				this.MemCopy(dst[miny + y], minx, src[y], 0, src[0].length);
 			}
 		}
 	}
@@ -546,7 +546,7 @@ class Matrix {
 		var result = this.Create(A.length * A[0].length);
 		
 		var i = 0;
-		
+
 		for (var y = 0; y < temp.length; y++) {
 			for (var x = 0; x < temp[0].length; x++) {
 				
@@ -555,7 +555,7 @@ class Matrix {
 				i++;
 			}
 		}
-		
+
 		return result;
 	}
 
