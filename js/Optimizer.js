@@ -480,7 +480,7 @@ class Optimizer {
         } else {
 			
             // restore point from before failed line search
-            this.f1 = this.F0;
+            this.f1 = F0;
 
             this.Copy(X, this.X0);
             this.Copy(this.df1, this.DF0);
