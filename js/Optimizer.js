@@ -55,125 +55,125 @@
 // JavaScript implementation by [sdsepara, 2019]
 //
 class Optimizer {
-	
-	constructor() {
-		
-		// RHO and SIG are the constants in the Wolfe-Powell conditions
-		this.RHO = 0.01;
-		this.SIG = 0.5;
 
-		// don't reevaluate within 0.1 of the limit of the current bracket
-		this.INT = 0.1;
+    constructor() {
 
-		// extrapolate maximum 3 times the current bracket
-		this.EXT = 3.0;
+        // RHO and SIG are the constants in the Wolfe-Powell conditions
+        this.RHO = 0.01;
+        this.SIG = 0.5;
 
-		// max 20 function evaluations per line search
-		this.MAX = 20;
+        // don't reevaluate within 0.1 of the limit of the current bracket
+        this.INT = 0.1;
 
-		// maximum allowed slope ratio
-		this.RATIO = 100.0;
+        // extrapolate maximum 3 times the current bracket
+        this.EXT = 3.0;
 
-		// reduction parameter
-		this.Red = 1.0;
+        // max 20 function evaluations per line search
+        this.MAX = 20;
 
-		this.s = [];
-		this.df1 = [];
+        // maximum allowed slope ratio
+        this.RATIO = 100.0;
 
-		this.MaxIterations = 0;
-		this.Iterations = 0;
-		this.Evaluations = 0;
+        // reduction parameter
+        this.Red = 1.0;
 
-		this.length = 0;
-		this.M = 0;
-		this.iteration = 0;
-		this.ls_failed = false;
+        this.s = [];
+        this.df1 = [];
 
-		this.f1 = 0.0
+        this.MaxIterations = 0;
+        this.Iterations = 0;
+        this.Evaluations = 0;
 
-		this.X0 = [];
-		this.DF0 = [];
+        this.length = 0;
+        this.M = 0;
+        this.iteration = 0;
+        this.ls_failed = false;
 
-		this.d1 = 0.0;
-		this.z1 = 0.0;
-	}
-	
-	// Reshape Network Weights for use in optimizer
-	ReshapeWeights(A) {
-		
-		var XX = [];
+        this.f1 = 0.0
 
-		if (A != null && A.length > 0) {
-			
-			for (var layer = 0; layer < A.length; layer++) {
-				for (var x = 0; x < A[layer][0].length; x++) {
-					for (var y = 0; y < A[layer].length; y++) {
-						
-						XX.push(A[layer][y][x]);
-					}
-				}
-			}
-		}
+        this.X0 = [];
+        this.DF0 = [];
 
-		return XX;
-	}
+        this.d1 = 0.0;
+        this.z1 = 0.0;
+    }
 
-	// Transform vector back into Network Weights
-	RevertWeights(XX, A) {
-		
-		var index = 0;
+    // Reshape Network Weights for use in optimizer
+    ReshapeWeights(A) {
 
-		for (var layer = 0; layer < A.length; layer++) {
-			for (var x = 0; x < A[layer][0].length; x++) {
-				for (var y = 0; y < A[layer].length; y++) {
-					
-					if (index < XX.length)
-						A[layer][y][x] = XX[index];
+        var XX = [];
 
-					index++;
-				}
-			}
-		}
-	}
+        if (A != null && A.length > 0) {
 
-	OptimizerCost(network, input, XX) {
-		
-		this.RevertWeights(XX, network.Weights);
+            for (var layer = 0; layer < A.length; layer++) {
+                for (var x = 0; x < A[layer][0].length; x++) {
+                    for (var y = 0; y < A[layer].length; y++) {
 
-		network.Forward(input);
-		network.BackPropagation(input);
+                        XX.push(A[layer][y][x]);
+                    }
+                }
+            }
+        }
 
-		XX = this.ReshapeWeights(network.Deltas);
+        return XX;
+    }
 
-		return {Cost: network.Cost, Gradient: XX};
-	}
+    // Transform vector back into Network Weights
+    RevertWeights(XX, A) {
 
-	SetupOptimizer(network, input, output, opts, Reset = true) {
-		
-		network.Setup(output, opts, Reset);
+        var index = 0;
 
-		this.MaxIterations = opts.Epochs;
+        for (var layer = 0; layer < A.length; layer++) {
+            for (var x = 0; x < A[layer][0].length; x++) {
+                for (var y = 0; y < A[layer].length; y++) {
 
-		var XX = this.ReshapeWeights(network.Weights);
+                    if (index < XX.length)
+                        A[layer][y][x] = XX[index];
 
-		this.Setup(network, input, XX);
-	}
+                    index++;
+                }
+            }
+        }
+    }
 
-	StepOptimizer(network, input, opts) {
-		
-		var XX = this.ReshapeWeights(network.Weights);
+    OptimizerCost(network, input, XX) {
 
-		this.Step(network, input, XX);
+        this.RevertWeights(XX, network.Weights);
 
-		this.Cost = this.f1;
+        network.Forward(input);
+        network.BackPropagation(input);
 
-		return (isNaN(this.Cost) || this.Iterations >= opts.Epochs || (this.Cost) < opts.Tolerance);
-	}
-	
-	Multiply(a, b) {
-		
-		var dot = 0.0;
-		
+        XX = this.ReshapeWeights(network.Deltas);
+
+        return { Cost: network.Cost, Gradient: XX };
+    }
+
+    SetupOptimizer(network, input, output, opts, Reset = true) {
+
+        network.Setup(output, opts, Reset);
+
+        this.MaxIterations = opts.Epochs;
+
+        var XX = this.ReshapeWeights(network.Weights);
+
+        this.Setup(network, input, XX);
+    }
+
+    StepOptimizer(network, input, opts) {
+
+        var XX = this.ReshapeWeights(network.Weights);
+
+        this.Step(network, input, XX);
+
+        this.Cost = this.f1;
+
+        return (isNaN(this.Cost) || this.Iterations >= opts.Epochs || (this.Cost) < opts.Tolerance);
+    }
+
+    Multiply(a, b) {
+
+        var dot = 0.0;
+
         if (a.length == b.length) {
 
             for (var i = 0; i < a.length; i++)
@@ -184,25 +184,25 @@ class Optimizer {
     }
 
     Add(dst, src, scale = 1.0) {
-		
+
         if (dst.length == src.length) {
-			
+
             for (var i = 0; i < dst.length; i++)
                 dst[i] += scale * src[i];
         }
     }
 
     Copy(dst, src, scale = 1.0) {
-		
+
         if (dst.length == src.length) {
-			
+
             for (var i = 0; i < dst.length; i++)
-				dst[i] = scale * src[i];
+                dst[i] = scale * src[i];
         }
     }
-    
+
     Setup(network, input, X) {
-		
+
         this.s = Matrix.Create(X.length);
 
         this.Evaluations = 0;
@@ -238,7 +238,7 @@ class Optimizer {
     }
 
     Step(network, input, X) {
-		
+
         // from R/Matlab smallest non-zero normalized floating point number
         var realmin = 2.225074e-308;
 
@@ -259,7 +259,7 @@ class Optimizer {
 
         // evaluate cost - and gradient function with new params
         var Eval = this.OptimizerCost(network, input, X);
-        
+
         var f2 = Eval.Cost;
         var df2 = Eval.Gradient;
 
@@ -277,11 +277,11 @@ class Optimizer {
         var z3 = -this.z1;
 
         if (this.length > 0) {
-			
+
             this.M = this.MAX;
-        
+
         } else {
-			
+
             this.M = Math.min(this.MAX, -this.length - this.iteration);
         }
 
@@ -290,9 +290,9 @@ class Optimizer {
         var limit = -1.0;
 
         while (true) {
-			
+
             while (((f2 > this.f1 + this.z1 * this.RHO * this.d1) || (d2 > -this.SIG * this.d1)) && (this.M > 0)) {
-				
+
                 // tighten bracket
                 limit = this.z1;
 
@@ -301,12 +301,12 @@ class Optimizer {
                 var z2 = 0.0;
 
                 if (f2 > this.f1) {
-					
+
                     // quadratic fit 
                     z2 = z3 - ((0.5 * d3 * z3 * z3) / (d3 * z3 + f2 - f3));
-                    
+
                 } else {
-					
+
                     // cubic fit
                     A = (6.0 * (f2 - f3)) / (z3 + (3.0 * (d2 + d3)));
                     B = (3.0 * (f3 - f2) - (z3 * ((d3 + 2.0) * d2)));
@@ -316,7 +316,7 @@ class Optimizer {
                 }
 
                 if (isNaN(z2) || !isFinite(z2)) {
-					
+
                     // if we had a numerical problem then bisect
                     z2 = z3 / 2.0;
                 }
@@ -347,13 +347,13 @@ class Optimizer {
             }
 
             if (f2 > (this.f1 + this.z1 * this.RHO * this.d1) || d2 > (-this.SIG * this.d1)) {
-				
+
                 // this is a failure
                 break;
             }
 
             if (d2 > (this.SIG * this.d1)) {
-				
+
                 // success
                 success = true;
 
@@ -361,7 +361,7 @@ class Optimizer {
             }
 
             if (this.M == 0) {
-				
+
                 // failure
                 break;
             }
@@ -374,45 +374,45 @@ class Optimizer {
             var z21 = -d2 * z3 * z3 / (B1 + Math.sqrt(B1 * B1 - A1 * d2 * z3 * z3));
 
             if (z21 < 0.0) {
-				
+
                 z21 = z21 * -1.0;
             }
 
             // num prob or wrong sign?
             if (isNaN(z21) || !isFinite(z21) || z21 < 0) {
-				
+
                 // if we have no upper limit
                 if (limit < -0.5) {
-					
+
                     // then extrapolate the maximum amount
                     z21 = this.z1 * (this.EXT - 1.0);
-                    
+
                 } else {
-					
+
                     // otherwise bisect
                     z21 = (limit - this.z1) / 2.0;
                 }
-                
+
             } else if (limit > -0.5 && (z21 + this.z1 > limit)) {
-				
+
                 // extrapolation beyond limit?
 
                 // set to extrapolation limit
                 z21 = (limit - this.z1) / 2.0;
-                
+
             } else if (limit < -0.5 && (z21 + this.z1 > this.z1 * this.EXT)) {
-				
+
                 z21 = this.z1 * (this.EXT - 1.0);
-                
+
             } else if (z21 < -z3 * this.INT) {
-				
+
                 // too close to limit?
                 z21 = -z3 * this.INT;
-                
+
             } else if ((limit > -0.5) && (z21 < (limit - this.z1) * (1 - this.INT))) {
-				
+
                 z21 = (limit - this.z1) * (1.0 - this.INT);
-                
+
             }
 
             // set point 3 equal to point 2
@@ -441,7 +441,7 @@ class Optimizer {
 
         // if line searched succeeded 
         if (success) {
-			
+
             this.f1 = f2;
 
             // Polack-Ribiere direction
@@ -462,7 +462,7 @@ class Optimizer {
 
             // new slope must be negative 
             if (d2 > 0.0) {
-				
+
                 // use steepest direction
                 this.Copy(this.s, this.df1, -1.0);
 
@@ -476,9 +476,9 @@ class Optimizer {
 
             // this line search did not fail
             this.ls_failed = false;
-            
+
         } else {
-			
+
             // restore point from before failed line search
             this.f1 = F0;
 
@@ -487,7 +487,7 @@ class Optimizer {
 
             // line search twice in a row
             if (this.ls_failed || this.iteration > Math.abs(this.length)) {
-				
+
                 // or we ran out of time, so we give up
                 return true;
             }
