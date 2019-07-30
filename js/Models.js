@@ -80,12 +80,14 @@ class Matrix {
 		var srcy = src.length;
 		var srcx = src[0].length;
 
+		var x, y, dst;
+
 		if (srcy > 1 && srcx > 1) {
 
-			var dst = this.Create(srcx, srcy);
+			dst = this.Create(srcx, srcy);
 
-			for (var y = 0; y < srcy; y++) {
-				for (var x = 0; x < srcx; x++) {
+			for (y = 0; y < srcy; y++) {
+				for (x = 0; x < srcx; x++) {
 
 					dst[x][y] = src[y][x];
 				}
@@ -95,9 +97,9 @@ class Matrix {
 
 		} else if (srcy > 1 && srcx == 1) {
 
-			var dst = this.Create(1, srcy);
+			dst = this.Create(1, srcy);
 
-			for (var y = 0; y < srcy; y++) {
+			for (y = 0; y < srcy; y++) {
 
 				dst[y] = src[y][0];
 			}
@@ -106,9 +108,9 @@ class Matrix {
 
 		} else if (srcx > 1 && srcy == 1) {
 
-			var dst = this.Create(srcx, 1);
+			dst = this.Create(srcx, 1);
 
-			for (var x = 0; x < srcx; x++) {
+			for (x = 0; x < srcx; x++) {
 
 				dst[x][0] = src[0][x];
 			}
@@ -276,15 +278,17 @@ class Matrix {
 	// mean of 2D array along a dimension
 	static Mean(src, dim) {
 
+		var x, y, result, sum;
+
 		if (dim === 1) {
 
-			var result = this.Create(src[0].length);
+			result = this.Create(src[0].length);
 
-			for (var x = 0; x < src[0].length; x++) {
+			for (x = 0; x < src[0].length; x++) {
 
-				var sum = 0.0;
+				sum = 0.0;
 
-				for (var y = 0; y < src.length; y++) {
+				for (y = 0; y < src.length; y++) {
 
 					sum += src[y][x];
 				}
@@ -296,13 +300,13 @@ class Matrix {
 
 		} else {
 
-			var result = this.Create(src.length);
+			result = this.Create(src.length);
 
-			for (var y = 0; y < src.length; y++) {
+			for (y = 0; y < src.length; y++) {
 
-				var sum = 0.0;
+				sum = 0.0;
 
-				for (var x = 0; x < src[0].length; x++) {
+				for (x = 0; x < src[0].length; x++) {
 
 					sum += src[y][x];
 				}
@@ -698,26 +702,28 @@ class Matrix {
 
 		var Ax = A[0].length, Ay = A.length;
 
+		var x, y;
+
 		var result = this.Create(Ay, Ax);
 		var maxvals = this.Create(Ax);
 		var minvals = this.Create(Ax);
 
-		for (var x = 0; x < Ax; x++) {
+		for (x = 0; x < Ax; x++) {
 
 			maxvals[x] = Number.MIN_VALUE;
 			minvals[x] = Number.MAX_VALUE;
 		}
 
-		for (var y = 0; y < Ay; y++) {
-			for (var x = 0; x < Ax; x++) {
+		for (y = 0; y < Ay; y++) {
+			for (x = 0; x < Ax; x++) {
 
 				maxvals[x] = Math.max(A[y][x], maxvals[x]);
 				minvals[x] = Math.min(A[y][x], minvals[x]);
 			}
 		}
 
-		for (var y = 0; y < Ay; y++) {
-			for (var x = 0; x < Ax; x++) {
+		for (y = 0; y < Ay; y++) {
+			for (x = 0; x < Ax; x++) {
 
 				var denum = maxvals[x] - minvals[x];
 
@@ -833,13 +839,15 @@ class DeepNeuralNetwork {
 	// backward propagation
 	BackPropagation(input) {
 
+		var layer;
+
 		var last = this.Weights.length - 1;
 
 		this.D[0] = Matrix.Diff(this.Y, this.Y_true);
 
 		var current = 1;
 
-		for (var layer = last - 1; layer >= 0; layer--) {
+		for (layer = last - 1; layer >= 0; layer--) {
 
 			var prev = current - 1;
 
@@ -854,7 +862,7 @@ class DeepNeuralNetwork {
 			current++;
 		}
 
-		for (var layer = 0; layer < this.Weights.length; layer++) {
+		for (layer = 0; layer < this.Weights.length; layer++) {
 
 			var tD = Matrix.Transpose(this.D[this.Weights.length - layer - 1]);
 			this.Deltas[layer] = Matrix.Multiply(tD, this.X[layer]);
@@ -1012,11 +1020,13 @@ class DeepNeuralNetwork {
 
 	Setup(output, opts, Reset = true) {
 
+		var layer;
+
 		if (Reset) {
 
 			if (this.Activations != undefined && this.Activations.length > 0) {
 
-				for (var layer = 0; layer < this.Activations.length; layer++) {
+				for (layer = 0; layer < this.Activations.length; layer++) {
 
 					this.Activations[layer] = [];
 				}
@@ -1024,7 +1034,7 @@ class DeepNeuralNetwork {
 
 			if (this.D != undefined && this.D.length > 0) {
 
-				for (var layer = 0; layer < this.D.length; layer++) {
+				for (layer = 0; layer < this.D.length; layer++) {
 
 					this.D[layer] = [];
 				}
@@ -1032,7 +1042,7 @@ class DeepNeuralNetwork {
 
 			if (this.Deltas != undefined && this.Deltas.length > 0) {
 
-				for (var layer = 0; layer < this.Deltas.length; layer++) {
+				for (layer = 0; layer < this.Deltas.length; layer++) {
 
 					this.Deltas[layer] = [];
 				}
@@ -1040,7 +1050,7 @@ class DeepNeuralNetwork {
 
 			if (this.X != undefined && this.X.length > 0) {
 
-				for (var layer = 0; layer < this.X.length; layer++) {
+				for (layer = 0; layer < this.X.length; layer++) {
 
 					this.X[layer] = [];
 				}
@@ -1048,7 +1058,7 @@ class DeepNeuralNetwork {
 
 			if (this.Z != undefined && this.Z.length > 0) {
 
-				for (var layer = 0; layer < this.Z.length; layer++) {
+				for (layer = 0; layer < this.Z.length; layer++) {
 
 					this.Z[layer] = [];
 				}
@@ -1056,7 +1066,7 @@ class DeepNeuralNetwork {
 
 			if (this.Weights != undefined && this.Weights.length > 0) {
 
-				for (var layer = 0; layer < this.Weights.length; layer++) {
+				for (layer = 0; layer < this.Weights.length; layer++) {
 
 					this.Weights[layer] = [];
 				}
@@ -1066,7 +1076,7 @@ class DeepNeuralNetwork {
 
 				this.Weights = Matrix.Create(this.Layers.length);
 
-				for (var layer = 0; layer < this.Layers.length; layer++) {
+				for (layer = 0; layer < this.Layers.length; layer++) {
 
 					this.Weights[layer] = Matrix.Create(this.Layers[layer].Outputs, this.Layers[layer].Inputs + 1);
 				}
@@ -1077,7 +1087,7 @@ class DeepNeuralNetwork {
 
 				this.Weights[0] = Matrix.Create(opts.Inputs + 1, opts.Nodes);
 
-				for (var layer = 1; layer < opts.HiddenLayers; layer++) {
+				for (layer = 1; layer < opts.HiddenLayers; layer++) {
 
 					this.Weights[layer] = Matrix.Create(opts.Nodes + 1, opts.Nodes);
 				}
@@ -1096,7 +1106,7 @@ class DeepNeuralNetwork {
 
 		if (Reset && this.Weights != undefined) {
 
-			for (var layer = 0; layer < opts.HiddenLayers + 1; layer++) {
+			for (layer = 0; layer < opts.HiddenLayers + 1; layer++) {
 
 				this.Weights[layer] = this.Rand(this.Weights[layer][0].length, this.Weights[layer].length);
 			}
