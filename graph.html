@@ -34,8 +34,8 @@ text {
 		.attr("width", width)
 		.attr("height", height);
 
-	var graph = { 
-		
+	var graph = {
+
 		"nodes": [
 			{"label": "i0", "layer": 1},
 			{"label": "i1", "layer": 1},
@@ -52,19 +52,19 @@ text {
 
 	// get network size
 	var netsize = {};
-		
+
 	nodes.forEach(function (d) {
-		
+
 		if(d.layer in netsize) {
-			
+
 			netsize[d.layer] += 1;
-			
+
 		} else {
-          
+
           netsize[d.layer] = 1;
-          
+
 		}
-		
+
 		d["lidx"] = netsize[d.layer];
     });
 
@@ -75,23 +75,23 @@ text {
 
     // create node locations
     nodes.map(function(d) {
-		
+
 		d["x"] = (d.layer - 0.5) * xdist;
 		d["y"] = (d.lidx - 0.5) * ydist;
     });
 
     // autogenerate links
     var links = [];
-	
+
 	nodes.map(function(d, i) {
-		
+
 		for (var n in nodes) {
-			
+
 			if (d.layer + 1 == nodes[n].layer) {
-				
+
 				links.push({"source": parseInt(i), "target": parseInt(n), "value": 1}) }
 		}
-		
+
     }).filter(function(d) { return typeof d !== "undefined"; });
 
     // draw links

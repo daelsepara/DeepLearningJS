@@ -269,7 +269,7 @@ angular
 							notify({ Iterations: network.Iterations, L2: network.L2, Cost: network.Cost });
 					}
 
-					// api to resolve the promise. Note: according to the $q spec, 
+					// api to resolve the promise. Note: according to the $q spec,
 					// a promise cannot be used once it has been resolved or rejected.
 					complete({ network: network, opts: opts });
 				}
@@ -341,7 +341,7 @@ angular
 					network.Iterations = optimizer.Iterations;
 					network.Cost = optimizer.Cost;
 
-					// api to resolve the promise. Note: according to the $q spec, 
+					// api to resolve the promise. Note: according to the $q spec,
 					// a promise cannot be used once it has been resolved or rejected.
 					complete({ network: network, opts: opts });
 				}
@@ -405,7 +405,7 @@ angular
 				var classification = network.Classify(normalizedData, opts, threshold);
 				var prediction = network.Predict(normalizedData, opts);
 
-				// api to resolve the promise. Note: according to the $q spec, 
+				// api to resolve the promise. Note: according to the $q spec,
 				// a promise cannot be used once it has been resolved or rejected.
 				complete({ classification: classification, prediction: prediction });
 			}
